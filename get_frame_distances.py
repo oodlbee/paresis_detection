@@ -1,7 +1,7 @@
 import math
 
 
-def get_distances(points):
+def get_frame_distances(points):
 
     # Right eyebrow (points from 18 to 22)
     sum_x = 0
