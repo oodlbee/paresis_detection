@@ -8,7 +8,9 @@ from utils import shape_to_row_array
 
 
 def get_video_points(video_full_file_name, markup_full_file_name, points_full_file_name, predictor_full_file_name):
+
     markup = pd.read_excel(markup_full_file_name, sheet_name=0)
+
 
     video = imageio.get_reader(video_full_file_name)
     video_file_name = os.path.basename(video_full_file_name)

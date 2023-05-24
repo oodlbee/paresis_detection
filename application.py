@@ -1,24 +1,27 @@
 import sys
 import json
 import os
-from functools import lru_cache
+import subprocess
+from main import main_start
 from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import QProcess
 from PyQt5.QtWidgets import QApplication, QMainWindow, QSizePolicy, QWidget, QAction, QMessageBox, \
-    QPushButton, QGridLayout, QLayout, QLineEdit, QMenuBar, QStatusBar, QLabel, QFileDialog, QComboBox
+    QPushButton, QGridLayout, QLayout, QProgressDialog, QMenuBar, QStatusBar, QLabel, QFileDialog, QComboBox
+
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, main_func=None):
         super().__init__(parent=None)
         self.cache_json = {
-                            "box1":[],
-                            "box2":[],
-                            "box3":[],
-                            "box4":[]
+            "box1": [],
+            "box2": [],
+            "box3": [],
+            "box4": []
         }
+        self.main_func = main_func
         self.home_path = os.path.realpath(__file__)
         self.setup_ui()
-
 
     def setup_ui(self):
 
@@ -43,8 +46,9 @@ class MainWindow(QMainWindow):
         self.centralwidget.setStyleSheet("")
         self.centralwidget.setObjectName("centralwidget")
 
-        #Begin button
+        # Begin button
         self.BeginButton_5 = QPushButton(self.centralwidget)
+        self.BeginButton_5.clicked.connect(self.process_main)
         self.BeginButton_5.setGeometry(QtCore.QRect(225, 250, 150, 42))
         size_policy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         size_policy.setHorizontalStretch(0)
@@ -69,7 +73,7 @@ class MainWindow(QMainWindow):
         self.gridLayout.setVerticalSpacing(24)
         self.gridLayout.setObjectName("gridLayout")
 
-        #Predict label
+        # Predict label
         self.label_1_predict = QLabel(self.layoutWidget)
         size_policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         size_policy.setHorizontalStretch(0)
@@ -105,7 +109,7 @@ class MainWindow(QMainWindow):
         self.pushButton_1_predict.setObjectName("pushButton_1_predict")
         self.gridLayout.addWidget(self.pushButton_1_predict, 0, 2, 1, 1)
 
-        #Video label
+        # Video label
         self.label_2_video = QLabel(self.layoutWidget)
         size_policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         size_policy.setHorizontalStretch(0)
@@ -150,7 +154,7 @@ class MainWindow(QMainWindow):
         self.pushButton_2_video.setObjectName("pushButton_2_video")
         self.gridLayout.addWidget(self.pushButton_2_video, 1, 2, 1, 1)
 
-        #Markdown label
+        # Markdown label
         self.label_3_markdown = QLabel(self.layoutWidget)
         size_policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         size_policy.setHorizontalStretch(0)
@@ -195,7 +199,7 @@ class MainWindow(QMainWindow):
         self.pushButton_3_markdown.setObjectName("pushButton_3_markdown")
         self.gridLayout.addWidget(self.pushButton_3_markdown, 2, 2, 1, 1)
 
-        #Save label
+        # Save label
         self.label_4_symmetries_file = QLabel(self.layoutWidget)
         size_policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         size_policy.setHorizontalStretch(0)
@@ -211,15 +215,15 @@ class MainWindow(QMainWindow):
         self.label_4_symmetries_file.setObjectName("label_4_symmetries_file")
         self.gridLayout.addWidget(self.label_4_symmetries_file, 3, 0, 1, 1)
 
-        self.combobox_4_symmetries_file  = QComboBox(self.layoutWidget)
+        self.combobox_4_symmetries_file = QComboBox(self.layoutWidget)
         size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         size_policy.setHorizontalStretch(0)
         size_policy.setVerticalStretch(0)
         size_policy.setHeightForWidth(self.combobox_4_symmetries_file.sizePolicy().hasHeightForWidth())
-        self.combobox_4_symmetries_file .setEditable(True)
-        self.combobox_4_symmetries_file .setSizePolicy(size_policy)
-        self.combobox_4_symmetries_file .setObjectName("combobox_4_symmetries_file ")
-        self.gridLayout.addWidget(self.combobox_4_symmetries_file , 3, 1, 1, 1)
+        self.combobox_4_symmetries_file.setEditable(True)
+        self.combobox_4_symmetries_file.setSizePolicy(size_policy)
+        self.combobox_4_symmetries_file.setObjectName("combobox_4_symmetries_file ")
+        self.gridLayout.addWidget(self.combobox_4_symmetries_file, 3, 1, 1, 1)
 
         # self.lineEdit_4_symmetries_file = QLineEdit(self.layoutWidget)
         # size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -255,22 +259,7 @@ class MainWindow(QMainWindow):
 
         self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
-        # self.setTabOrder(self.combobox_1_predict, self.lineEdit_2_video)
-        # self.setTabOrder(self.lineEdit_2_video, self.pushButton_2_video)
-        # self.setTabOrder(self.pushButton_2_video, self.pushButton_1_predict)
-        # self.setTabOrder(self.pushButton_1_predict, self.pushButton_3_markdown)
-        # self.setTabOrder(self.pushButton_3_markdown, self.lineEdit_3_markdown)
-        # self.setTabOrder(self.lineEdit_3_markdown, self.pushButton_4_symmetries_file)
-        # self.setTabOrder(self.pushButton_4_symmetries_file, self.lineEdit_4_symmetries_file)
-
         self.read_cache()
-        print(self)
-        # quit = Q("Quit", self)
-        # quit.triggered.connect(self.closeEvent)
-        #
-        # fmenu = self.menubar.addMenu("File")
-        # fmenu.addAction(quit)
-
 
     def retranslate_ui(self):
         _translate = QtCore.QCoreApplication.translate
@@ -287,14 +276,12 @@ class MainWindow(QMainWindow):
 
     def read_cache(self):
         if not os.path.isfile("cache.json"):
-            print(1)
             return
 
         with open("cache.json", "r") as f:
             try:
                 self.cache_json = json.load(f)
             except json.JSONDecodeError:
-                print(2)
                 return
         try:
             self.combobox_1_predict.addItems(self.cache_json['box1'])
@@ -303,28 +290,13 @@ class MainWindow(QMainWindow):
             self.combobox_4_symmetries_file.addItems(self.cache_json['box4'])
         except KeyError:
             open("cache.json", "w").close()
-        print(self.cache_json)
-
-        # line_list = cache_file.readlines()
-        # if len(line_list):
-        #     for line in line_list:
-        #         self.cache_list.append(line.split('?'))
-        #     self.combobox_1_predict.addItems(self.cache_list[0])
-        #     # self.combobox_2_predict.addItems(self.cache_list[1])
-        #     # self.combobox_3_predict.addItems(self.cache_list[2])
-        #     # self.combobox_4_predict.addItems(self.cache_list[3])
-        # else:
-        #     self.cache_list = [[], [], [], []]
-        #
-        # print(self.cache_list)
-        # cache_file.close()
 
     def write_cache(self):
         with open("cache.json", "w") as f:
             json.dump(self.cache_json, f)
 
     def file_search_predict(self):
-        #Predict find button
+        # Predict find button
         file_name = QFileDialog.getOpenFileName(self, "Select prediction model", self.home_path, "Dat Files (*.dat)")[0]
         if file_name in self.cache_json['box1']:
             self.cache_json["box1"].remove(file_name)
@@ -358,7 +330,8 @@ class MainWindow(QMainWindow):
 
     def save_result_file(self):
         # Save path button
-        file_name = QFileDialog.getExistingDirectory(self, "Select save path file", self.home_path, QFileDialog.ShowDirsOnly)
+        file_name = QFileDialog.getExistingDirectory(self, "Select save path file", self.home_path,
+                                                     QFileDialog.ShowDirsOnly)
         if file_name in self.cache_json['box4']:
             self.cache_json["box4"].remove(file_name)
         self.cache_json['box4'].insert(0, file_name)
@@ -367,13 +340,31 @@ class MainWindow(QMainWindow):
         if len(self.cache_json['box4']) > 4:
             self.cache_json['box4'].pop()
 
+    def process_main(self):
+        predictor_file_path = str(self.combobox_1_predict.currentText())
+        video_file_path = str(self.combobox_2_video.currentText())
+        markup_file_path = str(self.combobox_3_markdown.currentText())
+        save_to_files = str(self.combobox_4_symmetries_file.currentText())
+        if predictor_file_path == '' or \
+                video_file_path == '' or \
+                markup_file_path == '' or \
+                save_to_files == '':
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Ошибка")
+            msg.setInformativeText('Не все поля заполнены')
+            msg.setWindowTitle("Ошибка")
+            msg.exec_()
+        else:
+            self.main_func(predictor_file_path, video_file_path, markup_file_path, save_to_files)
+
     def closeEvent(self, e):
-        #Close application
+        # Close application
         self.write_cache()
         result = QMessageBox.question(self, "Подтверждение закрытия окна",
-                                                "Вы действительно хотите закрыть окно?",
-                                                QMessageBox.Yes | QMessageBox.No,
-                                                QMessageBox.No)
+                                      "Вы действительно хотите закрыть окно?",
+                                      QMessageBox.Yes | QMessageBox.No,
+                                      QMessageBox.No)
         if result == QMessageBox.Yes:
             e.accept()
             QWidget.closeEvent(self, e)
@@ -383,6 +374,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    main_window = MainWindow()
+    main_window = MainWindow(main_func=main_start)
     main_window.show()
     sys.exit(app.exec_())
