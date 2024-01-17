@@ -5,8 +5,8 @@ import os
 import pandas as pd
 from pathlib import Path
 
-from get_video_points import get_video_points
-from get_video_symmetries import get_video_symmetries
+# from get_video_points import get_video_points
+# from get_video_symmetries import get_video_symmetries
 
 
 def main_start(predictor_file_path, video_file_path, markup_file_path, save_to_files):
@@ -44,18 +44,19 @@ def get_list_of_files(dir_path):
 
 
 if __name__ == "__main__":
-    project_folder =  Path().resolve()
-    video_path = project_folder.joinpath('data/video')
-    markup_path = project_folder.joinpath('data/markup.xlsx')
-    write_path = project_folder.joinpath('data/processed')
-    predictor_file_path = project_folder.joinpath('models/shape_predictor_68_face_landmarks.dat')
+    pass
+    # project_folder =  Path().resolve()
+    # video_path = project_folder.joinpath('data/video')
+    # markup_path = project_folder.joinpath('data/markup.xlsx')
+    # write_path = project_folder.joinpath('data/processed')
+    # predictor_file_path = project_folder.joinpath('models/shape_predictor_68_face_landmarks.dat')
 
-    video_path_list = get_list_of_files(video_path)
+    # video_path_list = get_list_of_files(video_path)
 
-    for video_path in video_path_list:
-        name = video_path.name.split('.')[0]
-        write_path = project_folder.joinpath('data/processed/' + name)
-        main_start(str(predictor_file_path), str(video_path), str(markup_path), str(write_path))
+    # for video_path in video_path_list:
+    #     name = video_path.name.split('.')[0]
+    #     write_path = project_folder.joinpath('data/processed/' + name)
+    #     main_start(str(predictor_file_path), str(video_path), str(markup_path), str(write_path))
     
     # with open("paths.json", "r") as data_json:
     #     data_dict = json.load(data_json)
