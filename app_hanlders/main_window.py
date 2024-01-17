@@ -29,39 +29,40 @@ class MarkWindow(tk.Toplevel):
     def __init__(self, parent, video_path):
         super().__init__(parent)
         self.title('Разметка видео')
-        self.min_size = (300, 150)
-        self.minsize(self.min_size[0], self.min_size[1])
-
-        self.video_frame = tk.Frame(self, bd=10,  relief=tk.SOLID)
-        self.videoplayer = TkinterVideo(master=self.video_frame, keep_aspect=True)
+        
+        self.videoplayer = TkinterVideo(master=self, keep_aspect=True)
         self.videoplayer.load(video_path)
-        self.video_frame.pack(fill=tk.X, expand=True)
-        self.videoplayer.pack(fill=tk.X, expand=True)
+        self.videoplayer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
         self.video_info = self.videoplayer.video_info()
         print(self.video_info)
 
+        self.tools_hight = 150
         width = self.video_info['framesize'][0]
-        hight = self.video_info['framesize'][1] + self.min_size[1]
+        hight = self.video_info['framesize'][1] + self.tools_hight
         self.geometry(f"{width}x{hight}")
+        self.minsize(width, hight)
         
         self.glob_pause = True
         self.create_widgets()
         
 
+    def _fromat_seconds(self, seconds):
+        minutes, seconds = divmod(seconds, 60)
+        milliseconds = seconds % 1 * 100
+        return "{:02}:{:02}:{:02}".format(int(minutes), int(seconds), int(milliseconds))
+
+
     def update_scale(self, event=None):
         cur_frame= self.videoplayer.current_frame_number()
         self.progress_slider.set(cur_frame)
-
-        td = timedelta(milliseconds=int(cur_frame/self.video_info["framerate"]*1000))
-        self.start_time["text"] = f"{td.seconds//3600}:{td.seconds}:{td.microseconds//1000}"
+        self.start_time["text"] = self._fromat_seconds(cur_frame/self.video_info['framerate'])
 
 
     def update_video(self, event=None):
         cur_frame = int(self.progress_slider.get())
         self.videoplayer.seek(cur_frame)
-        td = timedelta(milliseconds=int(cur_frame/self.video_info["framerate"]*1000))
-        self.start_time["text"] = f"{td.seconds//3600}:{td.seconds}:{td.microseconds//1000}"
+        self.start_time["text"] = self._fromat_seconds(cur_frame/self.video_info['framerate'])
 
     def slider_seek_begin(self, event):
         """Function realised when first click on slider"""
@@ -75,17 +76,17 @@ class MarkWindow(tk.Toplevel):
 
         self.update_video()
         self.progress_slider.configure(command=None)
-        # if self.glob_pause == False:
-        #     self.videoplayer.play()
-        
+        if self.glob_pause == False:
+            self.videoplayer.play()
 
 
-
-    def skip(self, value: int):
+    def skip(self, next_frame: bool=True):
         """ skip seconds """
-        self.media_player.next_frame()
-        self.update_scale()
-        print(self.media_player.get_position())
+        cur_frame = self.videoplayer.current_frame_number()
+        if next_frame:
+            self.videoplayer.seek(cur_frame + 1)
+        else:
+            self.videoplayer.seek(cur_frame - 1)
 
 
 
@@ -109,17 +110,10 @@ class MarkWindow(tk.Toplevel):
         self.play_pause()
 
 
-
-    def _resize(self, event):
-        print("kek")
-        self.main_frame.configure(width=event.width, height=150)
-        # if self.main_frame.winfo_width() < self.min_size[0] or self.main_frame.winfo_height() < self.min_size[1]:
-        #     self.main_frame.config(width=self.min_size[0], height=self.min_size[1])
-
     def create_widgets(self):
 
-        self.main_frame = tk.Frame(self, borderwidth=10)
-        self.tools_frame = tk.Frame(self.main_frame, borderwidth=2)
+        self.main_frame = tk.Frame(self, height=self.tools_hight)
+        self.tools_frame = tk.Frame(self.main_frame)
         # self.frame_tools = ttk.Frame(self, height=150)
         # self.frame_tools.pack(fill=tk.X, expand=True)
         # self.frame_tools.bind("<Configure>", self.resize)
@@ -129,19 +123,12 @@ class MarkWindow(tk.Toplevel):
         self.progress_slider.bind("<Button-1>", self.slider_seek_begin)
         self.progress_slider.bind("<ButtonRelease-1>", self.slider_seek_end)
     
-        
-
-        # self.exercise_frame = ttk.Frame(self)
-        # self.to_from_frame = ttk.Frame(self)
-        # self.play_frame = ttk.Frame(self)
-        # self.time_save_frame = ttk.Frame(self)
 
 
         self.play_pause_btn = ttk.Button(self.tools_frame, text="Play", command=self.play_pause)
-        self.skip_minus_5sec = ttk.Button(self.tools_frame, text="Skip -5 sec", command=lambda: self.skip(-5))
-        self.skip_plus_5sec = ttk.Button(self.tools_frame, text="Skip +5 sec", command=lambda: self.skip(+5))
+        self.previous_frame = ttk.Button(self.tools_frame, text="Skip -5 sec", command=lambda: self.skip(next_frame=False))
+        self.next_frame = ttk.Button(self.tools_frame, text="Skip +5 sec", command=self.skip)
         
-
         exercise_label = ttk.Label(self.tools_frame, text="Выбор упражнения:")
 
         self.select_exercise = tk.StringVar()
@@ -150,23 +137,18 @@ class MarkWindow(tk.Toplevel):
 
         self.start_time = ttk.Label(self.tools_frame, text="00:00:00")
 
-        td = timedelta(milliseconds=int(self.video_info["duration"]*1000))
-        self.end_time = ttk.Label(self.tools_frame, text=f"{td.seconds//3600}:{td.seconds}:{td.microseconds//1000}")
+        self.end_time = ttk.Label(self.tools_frame, text=self._fromat_seconds(self.video_info['duration']))
 
 
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
-        self.progress_slider.pack(fill=tk.X, padx=10, pady=(5, 5))
+        self.main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.progress_slider.pack(fill=tk.X, padx=10, pady=5)
 
-        self.tools_frame.pack(fill=tk.X, padx=10, pady=(5, 5))
+        self.tools_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        # self.exercise_frame.pack(side="left", expand=True)
-        # self.to_from_frame.pack(side="left", expand=True)
-        # self.play_frame.pack(side="left", expand=True)
-        # self.time_save_frame.pack(side="left", expand=True)
 
-        self.skip_minus_5sec.pack(side="left")
+        self.previous_frame.pack(side="left")
         self.play_pause_btn.pack(side="left")
-        self.skip_plus_5sec.pack(side="left")
+        self.next_frame.pack(side="left")
 
         exercise_label.pack(side="top")
         self.cb_exercise.pack(side="top")
@@ -174,7 +156,6 @@ class MarkWindow(tk.Toplevel):
         self.end_time.pack(side="right")
         self.start_time.pack(side="right")
         
-        self.bind("<Configure>", self._resize)
         
 
         

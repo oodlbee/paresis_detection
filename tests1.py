@@ -1,12 +1,9 @@
-import tkinter as tk
+def _fromat_seconds(seconds):
+    minutes, seconds = divmod(seconds, 60)
+    milliseconds = seconds % 1 * 100
+    return "{:02}:{:02}:{:02}".format(int(minutes), int(seconds), int(milliseconds))
 
-window = tk.Tk()
-
-frame_a = tk.Frame(window, bg="red")
-frame_a.pack(fill=tk.BOTH, expand=True)
-
-frame_b = tk.Frame(window, bg="green")
-frame_b.pack(fill=tk.BOTH, expand=True)
-window.geometry(f"{500}x{600}")
-window.minsize(200, 200)
-window.mainloop()
+# Пример использования:
+seconds_float = 2.75  # замените это значение на ваше
+time_string = _fromat_seconds(seconds_float)
+print(time_string)

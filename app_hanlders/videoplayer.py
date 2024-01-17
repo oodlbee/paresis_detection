@@ -57,6 +57,7 @@ class TkinterVideo(tk.Label):
         self._keep_aspect_ratio = keep_aspect
         self._resampling_method: int = Image.NEAREST
 
+
         self.bind("<<Destroy>>", self.stop)
     
     def keep_aspect(self, keep_aspect: bool):
@@ -74,9 +75,8 @@ class TkinterVideo(tk.Label):
         self._keep_aspect_ratio = keep_aspect
 
     def _resize_event(self, event):
-        print(self.parent.width, self.parent.height)
         # if event.width < self.parent.min_size[0] or event.height < self.parent.min_size[0]
-        self._current_frame_size = self.parent.width, self.parent.height
+        self._current_frame_size = event.width, event.height
 
         if self._paused and self._current_img and self.scaled:
             if self._keep_aspect_ratio:
@@ -168,7 +168,6 @@ class TkinterVideo(tk.Label):
     
             try:
                 frame = next(self._container.decode(video=0))
-                print(frame)
 
                 self._time_stamp = float(frame.pts * self._video_info["time_base"])
 
@@ -340,7 +339,6 @@ class TkinterVideo(tk.Label):
 
     def seek(self, frame: int):
         """ seeks to specific time""" 
-        print(frame)
         self._frame_number = frame
         self._seek_value = int(frame/self._video_info["framerate"]*self.av_time_base)
         self._seek = True
