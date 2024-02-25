@@ -2,3 +2,6 @@ cache.json
 data/
 __pycache__/
 experiments/
+versions/
+results/
+temp/
