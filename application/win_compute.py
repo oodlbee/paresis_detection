@@ -2,24 +2,25 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import askyesno
-from threading import Thread, Event
-
-
+from multiprocessing import Queue, Process, Event
+from threading import Thread
+import gc
+from application.app_handlers import find_windows_center
 from computation.start_calculations import main_start
 from customtkinter import  CTkProgressBar
 
 
-class ComputeWindow(tk.Tk):
-    def __init__(self, predictor_file_path, video_file_path, markup_file_path , save_to_path):
-        super().__init__()
-        self.predictor_file_path = predictor_file_path
-        self.video_file_path = video_file_path
-        self.markup_file_path = markup_file_path
-        self.save_to_path = save_to_path
-
-        self.geometry('300x100')
-        self.title('Рассчет коэфициентов асимметрии')
+class ComputeWindow(tk.Toplevel):
+    def __init__(self, parent, predictor_file_path, video_file_path, markup_file_path , save_to_path):
+        super().__init__(parent)
+        self.parent = parent
+        self.title('Расчет коэффициентов')
         self.protocol("WM_DELETE_WINDOW", self._on_exit)
+        self.bind('<Destroy>', self._on_destroy)
+        self.window_width = 340
+        self.window_height = 100
+        center_x, center_y = find_windows_center(self, self.window_width , self.window_height)
+        self.geometry(f'{self.window_width }x{self.window_height}+{center_x}+{center_y}')
 
         self.columnconfigure(0, weight=1)
         
@@ -32,40 +33,67 @@ class ComputeWindow(tk.Tk):
 
         ttk.Button(self,
                 text='Отмена',
-                command=self._on_exit).grid(column=0, row=2, sticky=tk.E, padx=5, pady=10)
+                command=self._on_exit).grid(column=0, row=2, sticky=tk.E, padx=5, pady=5)
+        
         self.update()
 
-        self._execute_thread = Event()
-        self.compute_thread = Thread(target=self.launch_main, args=(self._execute_thread, ))
-        self.compute_thread.start()
+        self.event_update = Event()
+        self.progress_queue = Queue()
+
+        self.update_thread = Thread(target=self.update_progress_thread, args=(self.event_update, self.progress_queue))
+        self.update_thread.start()
+
+        self.compute_process = Process(
+            target=main_start,
+            args=[self.event_update, self.progress_queue, predictor_file_path, video_file_path, markup_file_path, save_to_path]
+            )
+        self.compute_process.start()
     
-    def _on_exit(self):
-        result = askyesno("Exit", "Вы хотите прервать процесс?")
+    def update_progress_thread(self, update_event, progress_queue):
+        while True:
+            update_event.wait()
+            update_event.clear()
+            if not progress_queue.empty():
+                progress_value = progress_queue.get()
+                if progress_value == 'end':
+                    return
+                self.progress_persantage['text'] = f'{int(progress_value * 100)} %'
+                self.progress_bar.set(progress_value)
+                self.update_idletasks()
+
+    def _on_destroy(self, event=None):
+        self.compute_process.kill()
+        gc.collect()
+    
+    def _on_exit(self, event=None):
+        result = askyesno("Выход", "Вы хотите прервать процесс?")
         if result:
-            self._execute_thread.set()
-            self.compute_thread.join()
+            self.parent.count_processes -= 1
+            self.progress_queue.put('end')
+            self.event_update.set()
+            self.compute_process.kill()
             self.destroy()
 
 
-    def update_progress(self, value:int, lenght:int):
-        cur_val = value / lenght
-        if value >= lenght:
-            cur_val = 0.99
-        self.progress_persantage['text'] = f'{int(cur_val * 100)} %'
-        self.progress_bar.set(cur_val)
-        self.update_idletasks()
+    # def update_progress(self, value:int, lenght:int):
+    #     cur_val = value / lenght
+    #     if value >= lenght:
+    #         cur_val = 0.99
+    #     self.progress_persantage['text'] = f'{int(cur_val * 100)} %'
+    #     self.progress_bar.set(cur_val)
+    #     self.update_idletasks()
 
 
-    def launch_main(self, execute_event):
-        main_start(
-         self.predictor_file_path,
-         self.video_file_path, 
-         self.markup_file_path,
-         self.save_to_path,
-         self.update_progress,
-         execute_event
-        )
-        self.progress_persantage['text'] = f'100 %'
-        self.progress_var.set(100)
+    # def launch_compute(self, predictor_file_path, video_file_path, markup_file_path, save_to_path):
+    #     main_start(
+    #      self.predictor_file_path,
+    #      self.video_file_path, 
+    #      self.markup_file_path,
+    #      self.save_to_path,
+    #      self.update_progress,
+    #      execute_event
+    #     )
+    #     self.progress_persantage['text'] = f'100 %'
+    #     self.progress_var.set(100)
 
         

@@ -8,11 +8,11 @@ class LoadingWindow(tk.Toplevel):
     def __init__(self, parent,):
         super().__init__(parent)
         self.title('Загрузка')
-        window_width = 300
-        window_height = 100
+        window_width = 250
+        window_height = 60
         center_x, center_y = find_windows_center(self, window_width, window_height)
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        label = tk.Label(self, text="Загрузка...", font=("Helvetica", 16))
+        label = tk.Label(self, text="Загрузка...", font=("Arial", 14))
         label.pack(pady=20)
         
 

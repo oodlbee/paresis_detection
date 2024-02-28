@@ -1,7 +1,6 @@
-cache.json
-data/
 __pycache__/
-experiments/
 versions/
 results/
 temp/
+ffmpeg
+ffmpeg/bin/ffmpeg.exe

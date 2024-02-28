@@ -42,14 +42,16 @@ def get_max_video_size(root, video_size: Tuple[int, int], pading: int = 200):
     return int(result_width), int(result_height)
 
 
-def video_redecoding(input_file: Path, save_folder: Path):
+def video_redecoding(input_file: Path):
+    print(Path.cwd())
     with tempfile.NamedTemporaryFile(suffix='.mp4', delete=False) as temp_file:
         temp_file_path = temp_file.name
     # date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     # name = "temp_video_" + date_str + ".mp4"
     # output_path = str(save_folder/name)
     # ffmpeg_path = "/usr/local/Cellar/ffmpeg/4.2.1_2/bin/ffmpeg"
-    command = f"/opt/homebrew/bin/ffmpeg -y -i {input_file} -vf 'scale=854:-1' -c:v libx264 -g 1 -b:v 720k {temp_file_path}"
+    ffmpeg_path = Path.cwd()/'ffmpeg/bin/ffmpeg'
+    command = f"{ffmpeg_path} -y -i {input_file} -vf scale=854:-1 -c:v libx264 -g 1 -b:v 720k {temp_file_path}"
     subprocess.run(command, shell=True)
     return temp_file_path
 

@@ -3,7 +3,7 @@ import re
 import tkinter as tk
 from pathlib import Path
 from tkinter import ttk, Menu
-from application.app_handlers import EditableListbox
+from application.app_handlers import EditableListbox, find_windows_center
 from tkinter.messagebox import showerror, askyesnocancel
 
 
@@ -14,8 +14,12 @@ class ExerciseWindow(tk.Toplevel):
         self.data_folder = Path(self.config_file['internal.files']['application_data'][1:-1]).absolute()
         self.parent = parent
         self.grab_set()
-        self.title("Редактор списка упражнений")
+        self.title("Редактор упражнений")
         self.protocol('WM_DELETE_WINDOW', self.on_close)
+        self.window_width = 300
+        self.window_height = 280
+        center_x, center_y = find_windows_center(self, self.window_width , self.window_height)
+        self.geometry(f'{self.window_width }x{self.window_height}+{center_x}+{center_y}')
 
 
         with open(str(self.data_folder/'exercises_current.json')) as file:
@@ -95,16 +99,16 @@ class ExerciseWindow(tk.Toplevel):
         self.listbox.config(yscrollcommand=self.scrollbar.set)
 
         # Create buttons and entry
-        self.entry = ttk.Entry(self, width=30)
+        self.entry = ttk.Entry(self, width=self.window_width-200)
         self.entry.bind("<Return>", self.add_item)
-        self.entry.pack(pady=5)
+        self.entry.pack(expand=True, padx=10, pady=5)
         add_button = ttk.Button(self, text="Добавить", command=self.add_item)
-        add_button.pack(side=tk.LEFT, padx=5)
+        add_button.pack(side=tk.LEFT, padx=5, pady=(0, 10))
         remove_button = ttk.Button(self, text="Удалить", command=self.remove_item)
-        remove_button.pack(side=tk.LEFT, padx=5)
+        remove_button.pack(side=tk.LEFT, padx=5, pady=(0, 10))
         self.bind("<BackSpace>", self.remove_item)
         edit_button = ttk.Button(self, text="Сохранить", command=self.save_list)
-        edit_button.pack(side=tk.RIGHT, padx=5)
+        edit_button.pack(side=tk.RIGHT, padx=5, pady=(0, 10))
 
         self.mainloop()
 
@@ -143,8 +147,14 @@ class ExerciseWindow(tk.Toplevel):
         self.exercise_list_initial = exercises
 
     def on_close(self):
-        if self.exercise_list_initial == list(self.listbox.get(0, tk.END)):
-            self.parent.on_close_exercise_window()
+        try:
+            if self.exercise_list_initial == list(self.listbox.get(0, tk.END)):
+                self.parent.on_close_exercise_window()
+                self.parent.grab_set()
+                self.destroy()
+                return
+        except Exception:
+            self.parent.grab_set()
             self.destroy()
             return
 

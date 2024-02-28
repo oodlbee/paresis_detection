@@ -7,7 +7,7 @@ from computation.get_video_points import get_video_points
 from computation.get_video_symmetries import get_video_symmetries
 
 
-def main_start(predictor_file_path:str, video_file_path:str, markup_file_path:str, save_to_path:str, progress_update: Callable, execute_event):
+def main_start(event, queue, predictor_file_path:str, video_file_path:str, markup_file_path:str, save_to_path:str):
     
     # Changing file paths type
     predictor_file_path = Path(predictor_file_path)
@@ -32,7 +32,7 @@ def main_start(predictor_file_path:str, video_file_path:str, markup_file_path:st
     markup_file_path = str(markup_file_path)
     predictor_file_path = str(predictor_file_path)
     
-    get_video_points(execute_event, progress_update, video_file_path, markup_file_path, points_full_file_path, predictor_file_path)
+    get_video_points(event, queue, video_file_path, markup_file_path, points_full_file_path, predictor_file_path)
     get_video_symmetries(video_file_path, points_full_file_path, symmetries_full_file_path)
 
 

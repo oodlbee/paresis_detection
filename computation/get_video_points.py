@@ -5,11 +5,11 @@ import os
 import pandas as pd
 from computation.utils import shape_to_row_array
 
-def get_video_points(execute_event, progress_update, video_full_file_name, markup_full_file_name, points_full_file_name, predictor_full_file_name):
+def get_video_points(event, queue, video_full_file_name, markup_full_file_name, points_full_file_name, predictor_full_file_name):
 
     markup = pd.read_excel(markup_full_file_name, sheet_name=0)
 
-    video = imageio.get_reader(video_full_file_name)
+    video_reader = imageio.get_reader(video_full_file_name)
     video_file_name = os.path.basename(video_full_file_name)
 
     detector = dlib.get_frontal_face_detector()
@@ -80,10 +80,8 @@ def get_video_points(execute_event, progress_update, video_full_file_name, marku
     
     video_points = []
 
-    for frame_num in range(video.get_length()):
-        if execute_event.is_set():
-            break
-        image = video.get_data(frame_num)
+
+    for frame_num, image in enumerate(video_reader):
         rects = detector(image, 1)
 
         print(frame_num)
@@ -106,8 +104,11 @@ def get_video_points(execute_event, progress_update, video_full_file_name, marku
 
         frame_points = [frame_num, frame_validity, frame_type] + row_array_points
         video_points.append(frame_points)
-        progress_update(frame_num, video.get_length())
+        queue.put(frame_num / video_reader.get_length())
+        event.set()
 
+    queue.put('end')
+    event.set()
     video_points_column_names = ['frame_num', 'frame_validity', 'frame_type']
     for i in range(0, 68):
         str_point_num = str(i + 1)
