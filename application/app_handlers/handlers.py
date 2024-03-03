@@ -1,19 +1,26 @@
 from typing import Tuple
 from datetime import datetime
 from pathlib import Path
-import tempfile
 import subprocess
 from tkinter import filedialog, END
 
 
-def select_file_path(entry, save=False, markup=False):
-    if save:
-        if markup:
-            init_file = 'markup.xlsx'
-            file_path = filedialog.asksaveasfilename(initialfile=init_file)
+def select_save_path(entry, dirictory:bool=False, init_file_name:str='', defaultextension:str=''):
+    if dirictory:
         file_path = filedialog.askdirectory()
     else:
-        file_path = filedialog.askopenfilename()
+        file_path = filedialog.asksaveasfilename(initialfile=init_file_name, defaultextension=defaultextension)
+    if file_path == None:
+        return None
+    entry.delete(0, END)
+    entry.insert(0, file_path)
+    return file_path
+
+
+def select_file_path(entry):
+    file_path = filedialog.askopenfilename()
+    if file_path == None:
+        return None
     entry.delete(0, END)
     entry.insert(0, file_path)
     return file_path
@@ -27,33 +34,21 @@ def find_windows_center(root, window_width, window_height):
     return center_x, center_y
 
 
-def get_max_video_size(root, video_size: Tuple[int, int], pading: int = 200):
-    screen_width, screen_height = root.winfo_screenwidth(), root.winfo_screenheight()
-    video_width, video_height = video_size
-    aspect_ratio = video_width / video_height
-
-    if screen_width > screen_height:
-        result_width = screen_width - pading*2
-        result_height = result_width // aspect_ratio 
-    else:
-        result_height = video_height - pading*2
-        result_width = aspect_ratio // result_height
-
-    return int(result_width), int(result_height)
+def get_max_video_size(root, padx: int = 200, pady: int = 250):
+    video_width, video_height = root.winfo_screenwidth() - padx, root.winfo_screenheight() - pady
+    if video_width >= 1280:
+        video_width = 1280
+    if video_height >= 720:
+        video_height = 720
+    return int(video_width), int(video_height)
 
 
-def video_redecoding(input_file: Path):
-    print(Path.cwd())
-    with tempfile.NamedTemporaryFile(suffix='.mp4', delete=False) as temp_file:
-        temp_file_path = temp_file.name
-    # date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-    # name = "temp_video_" + date_str + ".mp4"
-    # output_path = str(save_folder/name)
-    # ffmpeg_path = "/usr/local/Cellar/ffmpeg/4.2.1_2/bin/ffmpeg"
+def video_redecoding(input_file: Path, temp_video_file: Path, video_box: Tuple[int, int]):
     ffmpeg_path = Path.cwd()/'ffmpeg/bin/ffmpeg'
-    command = f"{ffmpeg_path} -y -i {input_file} -vf scale=854:-1 -c:v libx264 -g 1 -b:v 720k {temp_file_path}"
+    widht, height = video_box
+    command = f"{ffmpeg_path} -y -i {input_file} -vf scale={widht}:{height}:force_original_aspect_ratio=decrease:force_divisible_by=2 -c:v libx264 -g 1 -b:v 720k {temp_video_file}"
     subprocess.run(command, shell=True)
-    return temp_file_path
+    return temp_video_file
 
 def delete_widget(widget):
     widget.pack_forget()

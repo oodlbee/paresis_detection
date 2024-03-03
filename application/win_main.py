@@ -12,7 +12,7 @@ from tkinter.messagebox import showerror
 
 from application.win_mark import MarkWindow
 from application.win_compute import ComputeWindow
-from application.app_handlers import find_windows_center, select_file_path
+from application.app_handlers import find_windows_center, select_file_path, select_save_path
 from application.app_handlers import LoadingWindow
 
 
@@ -122,11 +122,11 @@ class Application(tk.Tk):
             label = ttk.Label(self, text=label_text, anchor="e", width=12)
             label.grid(row=row, column=0, pady=pady, sticky=tk.E)
 
-            self.entry_video = ttk.Entry(self, width=50, textvariable=self.video_folder)
+            self.entry_video = ttk.Entry(self, width=50, textvariable=self.video_folder, takefocus=False)
             self.entry_video.focus()
             self.entry_video.grid(row=row, column=1, padx=5, pady=pady, sticky=tk.EW)
 
-            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_video))
+            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_video), takefocus=False)
             button_folder.grid(row=row, column=2, padx=5, pady=pady, sticky=tk.EW)
 
 
@@ -137,13 +137,13 @@ class Application(tk.Tk):
             label = ttk.Label(self, text=label_text, anchor="e", width=12)
             label.grid(row=row, column=0, pady=pady, sticky=tk.E)
 
-            self.entry_mark = ttk.Entry(self, width=50, textvariable=self.mark_folder)
+            self.entry_mark = ttk.Entry(self, width=50, textvariable=self.mark_folder, takefocus=False)
             self.entry_mark.grid(row=row, column=1, padx=(5, 5), pady=pady, sticky=tk.EW)
 
-            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_mark))
+            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_mark), takefocus=False)
             button_folder.grid(row=row, column=2, padx=5, pady=pady, sticky=tk.EW)
 
-            button_marking = ttk.Button(self, text="Разметка", command=self.open_mark_window)
+            button_marking = ttk.Button(self, text="Разметка", command=self.open_mark_window, takefocus=False)
             button_marking.grid(row=row, column=3, padx=(5, 30), pady=pady, sticky=tk.EW)
 
         def create_save_row(self, label_text:str):
@@ -153,13 +153,13 @@ class Application(tk.Tk):
             label = ttk.Label(self, text=label_text, anchor="e", width=12)
             label.grid(row=row, column=0, pady=pady, sticky=tk.E)
 
-            self.entry_save = ttk.Entry(self, width=50, textvariable=self.save_folder)
+            self.entry_save = ttk.Entry(self, width=50, textvariable=self.save_folder, takefocus=False)
             self.entry_save.grid(row=row, column=1, padx=5, pady=pady, sticky=tk.EW)
 
-            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_save, True))
+            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_save_path(self.entry_save, dirictory=True), takefocus=False)
             button_folder.grid(row=row, column=2, padx=5, pady=pady, sticky=tk.EW)
 
-            button_video = ttk.Button(self, text="Запуск", command=self.open_compute_window)
+            button_video = ttk.Button(self, text="Запуск", command=self.open_compute_window, takefocus=False)
             button_video.grid(row=row, column=3, padx=(5, 30), pady=pady, sticky=tk.EW)
 
         create_video_row(self, "Видеофайл: ", pad_hight=80)

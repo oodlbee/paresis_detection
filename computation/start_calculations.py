@@ -34,6 +34,9 @@ def main_start(event, queue, predictor_file_path:str, video_file_path:str, marku
     
     get_video_points(event, queue, video_file_path, markup_file_path, points_full_file_path, predictor_file_path)
     get_video_symmetries(video_file_path, points_full_file_path, symmetries_full_file_path)
+    
+    queue.put('end')
+    event.set()
 
 
 def get_list_of_files(dir_path):

@@ -1,86 +1,38 @@
 import dlib
 import imageio
 import numpy as np
-import os
+from pathlib import Path
 import pandas as pd
 from computation.utils import shape_to_row_array
 
 def get_video_points(event, queue, video_full_file_name, markup_full_file_name, points_full_file_name, predictor_full_file_name):
-
+    video_file_name = Path(video_full_file_name).stem
     markup = pd.read_excel(markup_full_file_name, sheet_name=0)
+    markup = markup[markup['file_name'] == video_file_name].to_dict()
 
     video_reader = imageio.get_reader(video_full_file_name)
-    video_file_name = os.path.basename(video_full_file_name)
 
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(predictor_full_file_name)
 
-    exercises_dict = {}
+    exercises_dict = {
+        'eyebrows_raising': [],
+        'left_eye_squeezing': [],
+        'right_eye_squeezing': [],
+        'eyes_squeezing': [],
+        'smile': [],
+        'forced_smile': [],
+        'cheeks_puffing': [],
+        'lips_struggling': [],
+        'articulation': [],
+        'forced_articulation': []
+    }
     # Stucture of dict: {exercise name: [begin frama num, end frame num], ...}
 
-    # (01) Eyebrows raising
-    exercises_dict['eyebrows_raising'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'eyebrows_raising_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'eyebrows_raising_end'].values[0]
-    ]
-
-    # (02) Left eye squeezing
-    exercises_dict['left_eye_squeezing'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'left_eye_squeezing_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'left_eye_squeezing_end'].values[0]
-    ]
-
-    # (03) Right eye squeezing
-    exercises_dict['right_eye_squeezing'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'right_eye_squeezing_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'right_eye_squeezing_end'].values[0]
-    ]
-
-    # (04) Left and right eyes squeezing
-    exercises_dict['eyes_squeezing'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'eyes_squeezing_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'eyes_squeezing_end'].values[0]
-    ]
-
-    # (05) Smile
-    exercises_dict['smile'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'smile_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'smile_end'].values[0]
-    ]
-
-    # (06) Forced smile
-    exercises_dict['forced_smile'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'forced_smile_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'forced_smile_end'].values[0]
-    ]
-
-    # (07) Cheeks puffing
-    exercises_dict['cheeks_puffing'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'cheeks_puffing_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'cheeks_puffing_end'].values[0]
-    ]
-
-    # (08) Lips struggling
-    exercises_dict['lips_struggling'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'lips_struggling_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'lips_struggling_end'].values[0]
-    ]
-
-    # (09) Articulation
-    exercises_dict['articulation'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'articulation_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'articulation_end'].values[0]
-    ]
-
-    # (10) Forced articulation
-    exercises_dict['forced_articulation'] = [
-        markup.loc[markup['file_name'] == video_file_name, 'forced_articulation_begin'].values[0],
-        markup.loc[markup['file_name'] == video_file_name, 'forced_articulation_end'].values[0]
-    ]
+    for exercise in exercises_dict.keys():
+        exercises_dict[exercise] = [markup[exercise + '_begin'][0], markup[exercise + '_end'][0]]
     
     video_points = []
-
-
     for frame_num, image in enumerate(video_reader):
         rects = detector(image, 1)
 
@@ -106,9 +58,7 @@ def get_video_points(event, queue, video_full_file_name, markup_full_file_name, 
         video_points.append(frame_points)
         queue.put(frame_num / video_reader.get_length())
         event.set()
-
-    queue.put('end')
-    event.set()
+        
     video_points_column_names = ['frame_num', 'frame_validity', 'frame_type']
     for i in range(0, 68):
         str_point_num = str(i + 1)

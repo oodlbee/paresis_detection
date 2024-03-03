@@ -11,7 +11,7 @@ from PIL import Image
 from pandas import DataFrame
 
 from application.app_handlers import TkinterVideo
-from application.app_handlers import select_file_path, video_redecoding, find_windows_center
+from application.app_handlers import select_save_path, video_redecoding, get_max_video_size, find_windows_center
 from application.win_exercise import ExerciseWindow
 
 
@@ -23,13 +23,18 @@ class MarkWindow(tk.Toplevel):
         self.config_file = config
         self.data_folder = Path(self.config_file['internal.files']['application_data'][1:-1]).absolute()
         self.icons_folder = Path(self.config_file['internal.files']['application_icons'][1:-1]).absolute()
-        temp_video_path = video_redecoding(self.video_path)
+        video_box = get_max_video_size(self)
+        temp_video_path = self.data_folder/'_temp_ffmpeg.mp4'
+        video_redecoding(self.video_path, temp_video_path, video_box)
+
+        self.focus_set()
         self.config(cursor="")
         self.title('Разметка видео')   
 
         self.videoplayer = TkinterVideo(master=self, keep_aspect=True)
-        self.videoplayer.load(temp_video_path)
+        self.videoplayer.load(str(temp_video_path))
         self.video_info = self.videoplayer.video_info()
+        print(self.video_info)
         self.bind("<<Ended>>", self._video_ended)
         
         self.tools_hight = 110
@@ -53,6 +58,10 @@ class MarkWindow(tk.Toplevel):
         self.create_widgets()
         self.create_buttons_bindings()
         
+
+    def _on_destoy(self):
+        self.temp_video_file.delete()
+
 
     def create_menu(self):
         self.menubar = Menu(self)
@@ -123,7 +132,9 @@ class MarkWindow(tk.Toplevel):
             df_markup[exercise + '_begin'] = [self.markup_dict[exercise]['begin']]
             df_markup[exercise + '_end'] = [self.markup_dict[exercise]['end']]
         df_markup = DataFrame(df_markup)
-        result_path = select_file_path(self.parent.entry_mark, True, True)
+        result_path = select_save_path(self.parent.entry_mark, init_file_name='markup.xlsx', defaultextension='.xlsx')
+        if result_path == None:
+            return
         df_markup.to_excel(result_path, index=False)
 
 
@@ -136,15 +147,17 @@ class MarkWindow(tk.Toplevel):
         self.exercise_begin.configure(text=f'Начало: {begin_frame}')
         self.exercise_end.configure(text=f'Конец: {end_frame}')
 
+
     def update_markup(self, is_begin: bool = False):
         exercise = self.cb_exercise.get()
+        frame_num = self.videoplayer.current_frame_number()
         if exercise == "":
             return
         
         if is_begin:
-            self.markup_dict[exercise]['begin'] = self.num_frame["text"]
+            self.markup_dict[exercise]['begin'] = frame_num
         else:
-            self.markup_dict[exercise]['end'] = self.num_frame["text"]
+            self.markup_dict[exercise]['end'] = frame_num
         self.change_exercise_buttons()
         
     def clear_markup(self):
@@ -176,19 +189,20 @@ class MarkWindow(tk.Toplevel):
         self.videoplayer.seek(cur_frame)
         self._update_time_label(cur_frame)
 
+
     def slider_seek_begin(self, event):
         """Function realised when first click on slider"""
+        self.unbind('<<FrameGenerated>>')
         self.progress_slider.configure(command=self.update_video)
         if self.videoplayer.pause() == False:
             self.videoplayer.pause()
-        # self.progress_slider.configure(command=self.update_video)
 
 
     def slider_seek_end(self, event):
         """Function realised when click realised from slider"""
-
         self.update_video()
         self.progress_slider.configure(command=None)
+        self.bind('<<FrameGenerated>>', self.update_scale)
         if self.glob_pause == False:
             self.videoplayer.play()
 
@@ -196,12 +210,13 @@ class MarkWindow(tk.Toplevel):
     def skip(self, backward: bool=False):
         """ Skip seconds """
         cur_frame = self.videoplayer.current_frame_number()
+        if cur_frame <= 0 or cur_frame >= self.video_info['frames_num']:
+            return
         if backward:
             self.videoplayer.seek(cur_frame - 1)
         else:
             self.videoplayer.seek(cur_frame + 1)
-        self._update_time_label(cur_frame)
-
+        self.update_scale()
 
 
     def play_pause(self, event=None):
@@ -261,15 +276,15 @@ class MarkWindow(tk.Toplevel):
         self.cb_exercise['state'] = 'readonly'
         self.cb_exercise.current(0)
         
-        self.exercise_begin = ttk.Button(self.tools_frame, text=f"Начало: --", width=10, command=lambda: self.update_markup(is_begin=True))
-        self.exercise_end = ttk.Button(self.tools_frame, text=f"Конец: --", width=10, command=lambda: self.update_markup(False))
+        self.exercise_begin = ttk.Button(self.tools_frame, text=f"Начало: --", width=10, command=lambda: self.update_markup(is_begin=True), takefocus=False)
+        self.exercise_end = ttk.Button(self.tools_frame, text=f"Конец: --", width=10, command=lambda: self.update_markup(False), takefocus=False)
 
         self.start_time = ttk.Label(self.time_frame, text="00:00:00", width=7)
         self.end_time = ttk.Label(self.time_frame, text=self._fromat_seconds(self.video_info['duration']), width=7)
         self.num_frame_label = ttk.Label(self.time_frame, text='Номер кадра:')
         self.num_frame = ttk.Label(self.time_frame, text=0, width=7)
 
-        self.save_button = ttk.Button(self.time_frame, text="Сохранить", width=10, command=self.compile_markup_excel)
+        self.save_button = ttk.Button(self.time_frame, text="Сохранить", width=10, command=self.compile_markup_excel, takefocus=False)
 
         self.videoplayer.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
 
@@ -305,3 +320,5 @@ class MarkWindow(tk.Toplevel):
         self.bind("<Left>", lambda x: self.backward_frame.invoke())
         self.bind("<Right>", lambda x: self.forward_frame.invoke())
         self.bind("<space>", lambda x: self.play_pause_btn.invoke())
+        self.bind("<KeyPress-w>", lambda x: self.exercise_begin.invoke())
+        self.bind("<KeyPress-s>", lambda x: self.exercise_end.invoke())

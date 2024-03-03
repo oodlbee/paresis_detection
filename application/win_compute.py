@@ -15,7 +15,7 @@ class ComputeWindow(tk.Toplevel):
         super().__init__(parent)
         self.parent = parent
         self.title('Расчет коэффициентов')
-        self.protocol("WM_DELETE_WINDOW", self._on_exit)
+        self.protocol('WM_DELETE_WINDOW', self._on_exit)
         self.bind('<Destroy>', self._on_destroy)
         self.window_width = 340
         self.window_height = 100
@@ -56,16 +56,22 @@ class ComputeWindow(tk.Toplevel):
             if not progress_queue.empty():
                 progress_value = progress_queue.get()
                 if progress_value == 'end':
+                    self.progress_persantage['text'] = f'100 %'
+                    self.progress_bar.set(1)
                     return
                 self.progress_persantage['text'] = f'{int(progress_value * 100)} %'
                 self.progress_bar.set(progress_value)
                 self.update_idletasks()
+        
 
     def _on_destroy(self, event=None):
         self.compute_process.kill()
         gc.collect()
     
     def _on_exit(self, event=None):
+        if not self.compute_process.is_alive() and not self.update_thread.is_alive():
+            self.destroy()
+
         result = askyesno("Выход", "Вы хотите прервать процесс?")
         if result:
             self.parent.count_processes -= 1

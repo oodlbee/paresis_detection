@@ -4,9 +4,6 @@ import numpy as np
 import os
 import pandas as pd
 
-
-from tqdm import tqdm
-
 from multiprocessing import Pool
 from computation.utils import shape_to_row_array
     

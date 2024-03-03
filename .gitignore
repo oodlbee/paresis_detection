@@ -2,5 +2,6 @@ __pycache__/
 versions/
 results/
 temp/
-ffmpeg
-ffmpeg/bin/ffmpeg.exe
+ffmpeg/
+application/app_data/_temp_ffmpeg.mp4
+pares_venv/
