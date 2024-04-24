@@ -1,4 +1,11 @@
 import numpy as np
+from mediapipe.framework.formats.landmark_pb2 import NormalizedLandmarkList
+from typing import Tuple
+
+def get_coords(landmarks: NormalizedLandmarkList, init_image_shape: Tuple[int, int], points: list) -> np.array:
+    image_hight, image_width = init_image_shape
+
+    return np.array([(landmarks.landmark[idx].x * image_width, landmarks.landmark[idx].y * image_hight) for idx in  points])
 
 
 def shape_to_np_array(lib_shape, data_type="int"):
