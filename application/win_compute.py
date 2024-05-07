@@ -11,7 +11,7 @@ from customtkinter import  CTkProgressBar
 
 
 class ComputeWindow(tk.Toplevel):
-    def __init__(self, parent, predictor_file_path, video_file_path, markup_file_path , save_to_path):
+    def __init__(self, parent, video_file_path, markup_file_path, save_to_path):
         super().__init__(parent)
         self.parent = parent
         self.title('Расчет коэффициентов')
@@ -45,7 +45,7 @@ class ComputeWindow(tk.Toplevel):
 
         self.compute_process = Process(
             target=main_start,
-            args=[self.event_update, self.progress_queue, predictor_file_path, video_file_path, markup_file_path, save_to_path]
+            args=[self.event_update, self.progress_queue, video_file_path, markup_file_path, save_to_path]
             )
         self.compute_process.start()
     
@@ -55,9 +55,12 @@ class ComputeWindow(tk.Toplevel):
             update_event.clear()
             if not progress_queue.empty():
                 progress_value = progress_queue.get()
-                if progress_value == 'end':
+                if progress_value == -1:
+                    print('QUEUE END')
                     self.progress_persantage['text'] = f'100 %'
                     self.progress_bar.set(1)
+                    self.compute_process.kill()
+                    gc.collect()
                     return
                 self.progress_persantage['text'] = f'{int(progress_value * 100)} %'
                 self.progress_bar.set(progress_value)
@@ -68,6 +71,7 @@ class ComputeWindow(tk.Toplevel):
         self.compute_process.kill()
         gc.collect()
     
+
     def _on_exit(self, event=None):
         if not self.compute_process.is_alive() and not self.update_thread.is_alive():
             self.destroy()
@@ -79,27 +83,3 @@ class ComputeWindow(tk.Toplevel):
             self.event_update.set()
             self.compute_process.kill()
             self.destroy()
-
-
-    # def update_progress(self, value:int, lenght:int):
-    #     cur_val = value / lenght
-    #     if value >= lenght:
-    #         cur_val = 0.99
-    #     self.progress_persantage['text'] = f'{int(cur_val * 100)} %'
-    #     self.progress_bar.set(cur_val)
-    #     self.update_idletasks()
-
-
-    # def launch_compute(self, predictor_file_path, video_file_path, markup_file_path, save_to_path):
-    #     main_start(
-    #      self.predictor_file_path,
-    #      self.video_file_path, 
-    #      self.markup_file_path,
-    #      self.save_to_path,
-    #      self.update_progress,
-    #      execute_event
-    #     )
-    #     self.progress_persantage['text'] = f'100 %'
-    #     self.progress_var.set(100)
-
-        

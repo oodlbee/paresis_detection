@@ -50,44 +50,20 @@ class Application(tk.Tk):
         self.count_processes = 0
 
     def open_compute_window(self):
-        predictor_file_path = str(Path(self.config_file['internal.files']['predictor_file_path'][1:-1]).absolute())
         video_file_path = self.entry_video.get()
         markup_file_path = self.entry_mark.get()
         save_to_path = self.entry_save.get()
 
-        if '' in [predictor_file_path, video_file_path, markup_file_path, save_to_path]:
+        if '' in [video_file_path, markup_file_path, save_to_path]:
             showerror(title='Ошибка', message='Не все поля заполнены')
             return
         
         if self.count_processes > self.max_cores:
             showerror(title='Ошибка', message='Превышен лимит по количеству используемых ядер. Осталось 2 свободных ядра.')
             return
-        
-        ComputeWindow(self, predictor_file_path, video_file_path, markup_file_path , save_to_path)
+        ComputeWindow(self, video_file_path, markup_file_path, save_to_path)
         self.count_processes += 1
 
-    # def _start_compute_process(self):
-    #     predictor_file_path = str(Path(self.config_file['internal.files']['predictor_file_path'][1:-1]).absolute())
-    #     video_file_path = self.entry_video.get()
-    #     markup_file_path = self.entry_mark.get()
-    #     save_to_path = self.entry_save.get()
-
-
-    #     if '' in [predictor_file_path, video_file_path, markup_file_path, save_to_path]:
-    #         showerror(title='Ошибка', message='Не все поля заполнены')
-    #         return
-        
-    #     for idx, process in enumerate(self.process_list):
-    #         if not process.is_alive():
-    #             self.process_list.pop(idx)
-    #     if len(self.process_list) > self.max_cores:
-    #         showerror(title='Ошибка', message='Превышен лимит по количеству используемых ядер. Осталось 2 свободных ядра.')
-    #         return
-    #     self.process_list.append(Process(
-    #         target=open_compute_window, 
-    #         args=[predictor_file_path, video_file_path, markup_file_path, save_to_path]
-    #         ))
-    #     self.process_list[-1].start()
 
 
     def check_video_path(self):
