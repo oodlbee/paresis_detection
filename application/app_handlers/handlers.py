@@ -1,5 +1,4 @@
 from typing import Tuple
-from datetime import datetime
 from pathlib import Path
 import subprocess
 from tkinter import filedialog, END
@@ -46,9 +45,16 @@ def get_max_video_size(root, padx: int = 200, pady: int = 250):
 def video_redecoding(input_file: Path, temp_video_file: Path, video_box: Tuple[int, int]):
     ffmpeg_path = Path.cwd()/'ffmpeg/bin/ffmpeg'
     widht, height = video_box
-    command = f"{ffmpeg_path} -y -i {input_file} -vf scale={widht}:{height}:force_original_aspect_ratio=decrease:force_divisible_by=2 -c:v libx264 -g 1 -b:v 720k {temp_video_file}"
+    command = f'{ffmpeg_path} -y -i {input_file} -vf "setpts=PTS-STARTPTS" -vsync vfr \
+        -g 1 -keyint_min 1 -sc_threshold 0 -c:v libx264 -preset faster -crf 28 \
+        -c:a copy  {temp_video_file}'
+            # scale={widht}:{height}:force_original_aspect_ratio=decrease:force_divisible_by=2 \
+    # command = f"{ffmpeg_path} -y -i {input_file} -vf scale={widht}:{height}:force_original_aspect_ratio=decrease:force_divisible_by=2 -c:v libx264 -g 1 -b:v 720k {temp_video_file}"
     subprocess.run(command, shell=True)
+
     return temp_video_file
+
+
 
 def delete_widget(widget):
     widget.pack_forget()
