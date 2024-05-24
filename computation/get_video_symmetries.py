@@ -1,5 +1,6 @@
 import cv2
 import json 
+import logging
 import pandas as pd
 import numpy as np
 import mediapipe as mp
@@ -7,8 +8,11 @@ from pathlib import Path
 from computation.calculate import calculate_distances, calculate_symmetries
 from computation import constants
 
+logger = logging.getLogger('comp_logger')
+
+
 def get_video_symmetries(event, queue, video_full_file_name, markup_full_file_name, save_to_path):
-    video_file_name = Path(video_full_file_name).stem
+    video_file_name = video_full_file_name.stem
     markup = pd.read_excel(markup_full_file_name, sheet_name=0)
     markup = markup[markup['file_name'] == video_file_name].to_dict()
 
@@ -25,14 +29,16 @@ def get_video_symmetries(event, queue, video_full_file_name, markup_full_file_na
                             max_num_faces=1,
                             min_detection_confidence=0.5,
                             min_tracking_confidence=0.8) as face_mesh_model:
+        logger.debug('Model initializied successfully')
 
         cap = cv2.VideoCapture(str(video_full_file_name))
         total_frame_num = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         if total_frame_num == 0:
-            print('ERRROR')
-            return
-       
-
+            logger.error('There is 0 frames in videofile')
+            raise Exception('Empty videofile')
+        
+        logger.debug('Cv2 cap initializied successfully')
+        
         distances = constants.DISTANCES_EMPTY_DICT
         frame_num = 0
         while cap.isOpened():
@@ -40,7 +46,7 @@ def get_video_symmetries(event, queue, video_full_file_name, markup_full_file_na
             frame_num += 1
 
             if not ret:
-                print("Can't receive frame (stream end?). Exiting ...")
+                logger.info("Can't receive frame or End of stream")
                 break
             
             frame_type = 'empty_frame'
@@ -48,28 +54,33 @@ def get_video_symmetries(event, queue, video_full_file_name, markup_full_file_na
                 if begin <= frame_num < end:
                     frame_type = exercise
                     break
-
+   
             if frame_type == 'empty_frame':
                 continue
+
             frame.flags.writeable = False
             model_results = face_mesh_model.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).multi_face_landmarks
             frame.flags.writeable = True
             if not model_results:
-                print("no face detected {}")
+                logger.warning("No face detected. Continue...")
                 continue
-
+   
             model_results = model_results[0]
             distances = calculate_distances(frame_type, distances, frame, model_results)
 
-            queue.put(frame_num / total_frame_num)
-            event.set()
+            if frame_num % 10 == 0:
+                queue.put(frame_num / total_frame_num)
+                event.set()
 
         cap.release()
+        logger.debug("Cv2 cap released")
 
     symmetries, distances = calculate_symmetries(distances)
 
     with open(save_to_path / "distances.json", "w") as out_file: 
         json.dump(distances, out_file)
+    logger.debug(f"Distances saved on {out_file}")
 
     with open(save_to_path / "symmetries.json", "w") as out_file: 
         json.dump(symmetries, out_file)
+    logger.debug(f"Symmetries saved on {out_file}")

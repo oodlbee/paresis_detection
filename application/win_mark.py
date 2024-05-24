@@ -1,3 +1,5 @@
+import logging
+
 import tkinter as tk
 import customtkinter as ctk
 
@@ -11,19 +13,23 @@ from PIL import Image
 from pandas import DataFrame
 
 from application.app_handlers import TkinterVideo
-from application.app_handlers import select_save_path, video_redecoding, get_max_video_size, find_windows_center
+from application.app_handlers import select_save_path, video_redecoding, get_max_video_size, find_windows_center, get_init_video_info
 from application.win_exercise import ExerciseWindow
 
 
 class MarkWindow(tk.Toplevel):
     def __init__(self, parent, config, video_path):
         super().__init__(parent)
+        self.logger = logging.getLogger('app_logger')
+        self.logger.debug("Opened mark window")
         self.parent = parent
         self.video_path = video_path
         self.config_file = config
         self.data_folder = Path(self.config_file['internal.files']['application_data'][1:-1]).absolute()
         self.icons_folder = Path(self.config_file['internal.files']['application_icons'][1:-1]).absolute()
         video_box = get_max_video_size(self)
+
+        # decoding video for display
         temp_video_path = self.data_folder/'_temp_ffmpeg.mp4'
         video_redecoding(self.video_path, temp_video_path, video_box)
 
@@ -36,6 +42,13 @@ class MarkWindow(tk.Toplevel):
         self.video_info = self.videoplayer.video_info()
         print(self.video_info)
         self.bind("<<Ended>>", self._video_ended)
+
+        # debug moment
+        init_fm = get_init_video_info(self.video_path)
+        self.logger.info(f'Init video frame nums - {init_fm}')
+        if init_fm != self.video_info['frames_num']:
+            self.logger.error(f'Critical missmatch of frame nums: {init_fm} != {self.video_info["frames_num"]}')
+            raise Exception('Critical missmatch of frame nums')
         
         self.tools_hight = 110
         width = self.video_info['framesize'][0]
@@ -44,7 +57,9 @@ class MarkWindow(tk.Toplevel):
         self.geometry(f'{width}x{hight}+{center_x}+{center_y}')
         self.minsize(width, hight)
         
+        # Some flags
         self.glob_pause = True
+
         self.markup_dict = {}
         # Construction of self.markup_dict:
         #   {
@@ -60,6 +75,7 @@ class MarkWindow(tk.Toplevel):
         
 
     def _on_destoy(self):
+        self.logger.debug("Delete temp video file")
         self.temp_video_file.delete()
 
 
@@ -88,6 +104,7 @@ class MarkWindow(tk.Toplevel):
             label="Разметка",
             menu=self.markup_menu,
         )
+        self.logger.debug("Menu is created")
 
 
     def _fromat_seconds(self, seconds):
@@ -124,9 +141,11 @@ class MarkWindow(tk.Toplevel):
         df_markup = {'file_name': video_name}
         for exercise in self.markup_dict.keys():
             if self.markup_dict[exercise]['begin'] == None:
+                self.logger.warning(f"There is no markup of begining of exersize {exercise}")
                 showerror(title='Ошибка', message=f'Нет разметки начала упражнения {exercise}')
                 return
             if self.markup_dict[exercise]['end'] == None:
+                self.logger.warning(f"There is no markup of ending of exersize {exercise}")
                 showerror(title='Ошибка', message=f'Нет разметки конца упражнения {exercise}')
                 return
             df_markup[exercise + '_begin'] = [self.markup_dict[exercise]['begin']]
@@ -134,8 +153,10 @@ class MarkWindow(tk.Toplevel):
         df_markup = DataFrame(df_markup)
         result_path = select_save_path(self.parent.entry_mark, init_file_name='markup.xlsx', defaultextension='.xlsx')
         if result_path == None:
+            self.logger.warning(f"Markup is not saved. Empty selected path")
             return
         df_markup.to_excel(result_path, index=False)
+        self.logger.info(f"Markup is saved on path {result_path}")
 
 
     def change_exercise_buttons(self, event=None):
@@ -210,33 +231,47 @@ class MarkWindow(tk.Toplevel):
     def skip(self, backward: bool=False):
         """ Skip seconds """
         cur_frame = self.videoplayer.current_frame_number()
-        if cur_frame <= 0 or cur_frame >= self.video_info['frames_num']:
+        if cur_frame <= 0 or cur_frame > self.video_info['frames_num']:
+            self.logger.error(f"Current frame - {cur_frame} <= 0 or > video frame num - {self.video_info['frames_num']}")
             return
         if backward:
             self.videoplayer.seek(cur_frame - 1)
+            self.logger.debug(f"Skipped backward to frame number {cur_frame - 1}")
         else:
+            if cur_frame == self.video_info['frames_num']:
+                self.logger.warning(f"Trying to seek forward when video has been ended")
+                return
             self.videoplayer.seek(cur_frame + 1)
+            self.logger.debug(f"Skipped forward to frame number {cur_frame + 1}")
         self.update_scale()
 
 
     def play_pause(self, event=None):
         """ Pauses and plays """
+        cur_frame = self.videoplayer.current_frame_number()
         if self.videoplayer.is_paused():
+            # If continue button pressed when video ended - go to begining
+            if cur_frame == self.video_info['frames_num']:
+                self.videoplayer.restart_video()
+                self.progress_slider.set(1)
             self.glob_pause = False
             self.bind('<<FrameGenerated>>', self.update_scale)
             self.videoplayer.play()
             self.play_pause_btn.configure(image=self.pause_image)
+            self.logger.debug("Video unpaused")
         else:
             self.glob_pause = True
             self.unbind('<<FrameGenerated>>')
             self.videoplayer.pause()
             self.play_pause_btn.configure(image=self.play_image)
+            self.logger.debug("Video paused")
 
 
     def _video_ended(self, event=None):
         """ Handle video ended """
-        self.progress_slider.set(1)
+        # self.progress_slider.set(1)
         self.play_pause()
+        self.logger.debug("Video ended")
 
 
     def create_widgets(self):
@@ -310,6 +345,7 @@ class MarkWindow(tk.Toplevel):
         self.start_time.grid(column=0, row=0, sticky=tk.E)
         self.end_time.grid(column=1, row=0, sticky=tk.W, padx=(0, 20))
         self.save_button.grid(column=0, row=1, columnspan=2, sticky=tk.EW, padx=(0, 20))
+        self.logger.debug("Widgets are created")
         # self.num_frame_label.grid(column=0, row=1, sticky=tk.E)
         # self.num_frame.grid(column=1, row=1, sticky=tk.W)
         # self.end_time.pack(side=tk.RIGHT, padx=(0, 10))

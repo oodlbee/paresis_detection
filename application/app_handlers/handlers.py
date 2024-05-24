@@ -1,27 +1,48 @@
+import cv2
+import subprocess
+import logging
+
+from utils import timed_log
 from typing import Tuple
 from pathlib import Path
-import subprocess
 from tkinter import filedialog, END
+
+from configparser import ConfigParser
+config = ConfigParser()
+config.read('application/app_config.ini')
+
+logger = logging.getLogger('app_logger')
+
 
 
 def select_save_path(entry, dirictory:bool=False, init_file_name:str='', defaultextension:str=''):
+    """Creates ask window to select files or, if directory == True, get directory name"""
     if dirictory:
         file_path = filedialog.askdirectory()
+        logger.debug('Ask save directory window created')
     else:
+        
         file_path = filedialog.asksaveasfilename(initialfile=init_file_name, defaultextension=defaultextension)
-    if file_path == None:
-        return None
+        logger.debug('Ask save file path window created')
+    if file_path == None or file_path == '':
+        logger.debug('Empty path, nothing changes')
+        return
+    
     entry.delete(0, END)
     entry.insert(0, file_path)
+    logger.debug('Entry is rewritten')
     return file_path
 
 
 def select_file_path(entry):
     file_path = filedialog.askopenfilename()
-    if file_path == None:
-        return None
+    logger.debug('Ask open file window created')
+    if file_path == None or file_path == '':
+        logger.debug('Empty path, nothing changes')
+        return
     entry.delete(0, END)
     entry.insert(0, file_path)
+    logger.debug('Entry is rewritten')
     return file_path
 
 
@@ -39,19 +60,34 @@ def get_max_video_size(root, padx: int = 200, pady: int = 250):
         video_width = 1280
     if video_height >= 720:
         video_height = 720
+    logger.info(f'Max video size is calculated as {int(video_width)}, {int(video_height)}')
     return int(video_width), int(video_height)
 
 
+def get_init_video_info(input_file: Path):
+    video = cv2.VideoCapture(str(input_file))
+    if not video.isOpened():
+        return None
+    frame_num = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    video.release()
+    return frame_num
+    
+
+@timed_log(logger)
 def video_redecoding(input_file: Path, temp_video_file: Path, video_box: Tuple[int, int]):
     ffmpeg_path = Path.cwd()/'ffmpeg/bin/ffmpeg'
+    ffmpeg_logger_folder = Path(config['internal.files']['applications_loggers'][1:-1]).absolute()
+    ffmpeg_logger_path = str(ffmpeg_logger_folder / Path('ffmpeg_logger.log'))
     widht, height = video_box
-    command = f'{ffmpeg_path} -y -i {input_file} -vf "setpts=PTS-STARTPTS" -vsync vfr \
-        -g 1 -keyint_min 1 -sc_threshold 0 -c:v libx264 -preset faster -crf 28 \
-        -c:a copy  {temp_video_file}'
-            # scale={widht}:{height}:force_original_aspect_ratio=decrease:force_divisible_by=2 \
-    # command = f"{ffmpeg_path} -y -i {input_file} -vf scale={widht}:{height}:force_original_aspect_ratio=decrease:force_divisible_by=2 -c:v libx264 -g 1 -b:v 720k {temp_video_file}"
-    subprocess.run(command, shell=True)
 
+    # ffmpeg command makes scalig, decreasing bitrate and
+    # makes every frame - keyframe
+    command = f'''{ffmpeg_path} -y -i {input_file} -vf "scale='min({widht}, iw)':'min({height}, ih)':force_original_aspect_ratio=decrease" \
+        -vsync vfr \
+        -g 1 -keyint_min 1 -sc_threshold 0 -c:v libx264 -preset faster -crf 28 \
+        -c:a copy  {temp_video_file} > {ffmpeg_logger_path} 2>&1'''
+
+    subprocess.run(command, shell=True)
     return temp_video_file
 
 

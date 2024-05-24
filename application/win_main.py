@@ -1,3 +1,5 @@
+import logging
+from cv2 import VideoCapture
 from os import path
 from pathlib import Path
 from sys import platform
@@ -15,12 +17,14 @@ from application.win_compute import ComputeWindow
 from application.app_handlers import find_windows_center, select_file_path, select_save_path
 from application.app_handlers import LoadingWindow
 
+logger = logging.getLogger('app_logger')
+
 
 class Application(tk.Tk):
-    def __init__(self, app_config: ConfigParser, config: ConfigParser):
+    def __init__(self, app_config: ConfigParser):
         super().__init__()
+        logger.debug("Opened main window")
         self.app_config_file = app_config
-        self.config_file = config
         self.title('Детекция асимметрии')
 
         window_width, window_height = 850, 300
@@ -55,10 +59,12 @@ class Application(tk.Tk):
         save_to_path = self.entry_save.get()
 
         if '' in [video_file_path, markup_file_path, save_to_path]:
+            logger.warning("Error while trying to open compute window: There are empty fields")
             showerror(title='Ошибка', message='Не все поля заполнены')
             return
         
         if self.count_processes > self.max_cores:
+            logger.warning("Error while trying to open compute window: Cores limit is exceeded")
             showerror(title='Ошибка', message='Превышен лимит по количеству используемых ядер. Осталось 2 свободных ядра.')
             return
         ComputeWindow(self, video_file_path, markup_file_path, save_to_path)
@@ -67,24 +73,36 @@ class Application(tk.Tk):
 
 
     def check_video_path(self):
+        logger.debug("Checking video path existance")
         video_path = self.video_folder.get()
+
         # Check if file exists
         if not path.isfile(video_path):
+            logger.warning(f"Video file doesn't exits on {video_path}")
             return "Видеофайл не найден"
+        
         # Check if file is a video
         mime_type, _ = guess_type(video_path)
         if not (mime_type and mime_type.startswith('video')):
+            logger.warning(f"Wrong format of videofile on {video_path}")
             return "Неверный формат видеофайла"
+        
+        video = VideoCapture(video_path)
+        if not video.isOpened():
+            logger.warning(f"Cant open CV with videofile on {video_path}")
+            return "Неверный формат видеофайла"
+        video.release()
 
 
     def open_mark_window(self):
         video_status = self.check_video_path()
+        logger.debug("Trying to open video file")
         if video_status:
             showerror(title='Ошибка', message=video_status)
         else:
             loading_window = LoadingWindow(self)
             self.update()
-            mark_window = MarkWindow(self, self.app_config_file,self.video_folder.get())
+            mark_window = MarkWindow(self, self.app_config_file, self.video_folder.get())
             loading_window.destroy()
             mark_window.grab_set()
             self.wait_window(mark_window)
@@ -141,6 +159,8 @@ class Application(tk.Tk):
         create_video_row(self, "Видеофайл: ", pad_hight=80)
         create_mark_row(self, "Разметка: ")
         create_save_row(self, "Сохранять в: ")
+
+        logger.debug("Widgets are created")
 
 
 if __name__ == "__main__":

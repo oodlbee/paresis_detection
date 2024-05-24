@@ -8,7 +8,8 @@ import sounddevice as sd
 from typing import Tuple, Dict
 from application.app_handlers.video_timer import StartTimer
 from PIL import ImageTk, Image, ImageOps
-logging.getLogger('libav').setLevel(logging.ERROR)  # removes warning: deprecated pixel format used
+logger = logging.getLogger('app_logger')
+# logging.getLogger('libav').setLevel(logging.ERROR)  # removes warning: deprecated pixel format used
 
 
 class TkinterVideo(tk.Label):
@@ -35,7 +36,6 @@ class TkinterVideo(tk.Label):
             "framesize": (0, 0), # tuple containing frame height and width of the video
             "audio_sample_rate": 0,
             "frames_num": 0
-
         }   
 
         self.set_scaled(scaled)
@@ -67,12 +67,12 @@ class TkinterVideo(tk.Label):
         if self._paused and self._current_img and self.scaled:
             if self._keep_aspect_ratio:
                 proxy_img = ImageOps.contain(self._current_img.copy(), self._current_frame_size)
-
             else:
                 proxy_img = self._current_img.copy().resize(self._current_frame_size)
             
             self._current_imgtk = ImageTk.PhotoImage(proxy_img)
             self.config(image=self._current_imgtk)
+            logger.info(f'Video scaled to {self._current_frame_size}')
 
 
     def set_scaled(self, scaled: bool, keep_aspect: bool = False):
@@ -91,9 +91,11 @@ class TkinterVideo(tk.Label):
         self.config(width=self._video_info["framesize"][0], height=self._video_info["framesize"][1], image=self.current_imgtk)
         self._current_frame_size = self._video_info["framesize"][0], self._video_info["framesize"][1]
 
+
     def _frame_preview(self):
-        """previews one frame"""
+        """ previews one frame """
         frame = next(self._container.decode(video=0))
+        logger.debug(f'Current frame num is {int(frame.pts * self.av_time_base * self._video_info["framerate"])}')
         self._time_stamp = float(frame.pts * self._video_info["time_base"])
         width, height = self._current_frame_size[0] ,self._current_frame_size[1]
         if self._keep_aspect_ratio:
@@ -116,15 +118,16 @@ class TkinterVideo(tk.Label):
 
 
     def _resume_audio(self):
-        """resumes the audio"""
+        """ resumes the audio """
         self._audio_frame_number = int(self._time_stamp * self._video_info['audio_sample_rate'])
         if self._audio_frame_number < len(self.audio):
             sd.play(self.audio[self._audio_frame_number:])
 
 
     def _play_video(self):
-        """ load's file from a thread """
+        """ loads file from a thread """
         current_thread = threading.current_thread()
+        logger.debug('Start play_video loop')
         
         while self._video_thread == current_thread:
             if self._paused:
@@ -134,6 +137,7 @@ class TkinterVideo(tk.Label):
     
             try:
                 frame = next(self._container.decode(video=0))
+                self._frame_number += 1
                 self._time_stamp = float(frame.pts * self._video_info["time_base"])
                 width, height = self._current_frame_size[0] ,self._current_frame_size[1]
 
@@ -154,23 +158,21 @@ class TkinterVideo(tk.Label):
                 else:
                     self.current_imgtk = ImageTk.PhotoImage(self._current_img)
                 delay = self.timer.frame_delay(self._time_stamp)
-                self.after(int(max(delay, 0)*1000), self.config(image=self.current_imgtk))
-                self._frame_number += 1
+                self.after(int(max(delay, 0) * 1000), self.config(image=self.current_imgtk))
+
                 self.event_generate("<<FrameGenerated>>")
 
-                if self._frame_number % 5 == 0:
-                    self.event_generate("<<UpdateScale>>")
-
-            except (StopIteration, av.error.EOFError):
+            except (StopIteration, av.error.EOFError) as e:
+                self._frame_number += 1
+                logger.debug(f'{e} raized, current frame - {self._frame_number}')
                 try:
                     self.event_generate("<<Ended>>")
                 except tk.TclError:
                     self._cleanup()
-                self._container.seek(0)
-                self._frame_number = 0
-                self._time_stamp = 0
-                self.timer = StartTimer()
-                self.timer.pause()
+                # self._container.seek(0)
+                # self._frame_number = 0
+                # self._time_stamp = 0
+                # self.timer = StartTimer()
                 self.pause()
                 continue
             except tk.TclError:
@@ -202,6 +204,7 @@ class TkinterVideo(tk.Label):
         self._container = av.open(path)
         self._container.discard_corrupt = True
         self._container.streams.video[0].thread_type = "AUTO"
+        self._container.streams.video[0].codec_context.thread_count = 1
         self._container.streams.audio[0].thread_type = "AUTO"
 
         stream_video = self._container.streams.video[0]
@@ -215,13 +218,16 @@ class TkinterVideo(tk.Label):
             self._video_info['audio_sample_rate'] = stream_audio.rate
             self._video_info["framesize"] = (stream_video.width, stream_video.height)   
         except (TypeError, tk.TclError):
+            logger.error("Can't open video file by pyav")
             raise TypeError("Not a video file")
         
         self.audio = []
         for frame in self._container.decode(stream_audio):
             self.audio.append(frame.to_ndarray()[0])
+            
         self.audio = np.array(self.audio).flatten()
         sd.default.samplerate = self._video_info['audio_sample_rate']
+        logger.info(f"Video information: {self._video_info}")
 
         self._container.seek(0)
         
@@ -233,6 +239,7 @@ class TkinterVideo(tk.Label):
         self._video_thread = threading.Thread(target=self._play_video, daemon=True)
         self._video_thread.start()
         self.event_generate("<<Loaded>>")
+        logger.debug("<<Loaded>> event generated")
 
 
     def pause(self):
@@ -240,6 +247,7 @@ class TkinterVideo(tk.Label):
         self._paused = True
         sd.stop()
         self.timer.pause()
+        logger.debug("Video paused")
 
 
     def play(self):
@@ -248,13 +256,24 @@ class TkinterVideo(tk.Label):
         self._resume_video_event.set()
         self._resume_audio()
         self.timer.resume()
+        logger.debug("Video resumed")
+
+    def restart_video(self):
+        self._container.seek(0)
+        self._frame_number = 0
+        self._time_stamp = 0
+        self.timer = StartTimer()
+        self.timer.pause()
+        logger.debug("Video restarted")
 
 
     def seek(self, frame: int):
         """ seeks to specific time""" 
         self._frame_number = frame
-        seek_value = int(frame/self._video_info["framerate"]*self.av_time_base)
-        self._container.seek(seek_value, whence='time', backward=True, any_frame=False) # the seek time is given in av.time_base, the multiplication is to correct the frame
+        seek_value = int(frame / self._video_info["framerate"] * self.av_time_base)
+        # the seek time is given in av.time_base, the multiplication is to correct the frame
+        self._container.seek(seek_value, whence='time', backward=True, any_frame=False) 
+        logger.debug(f'Seek container to frame {self._frame_number}')
         self._frame_preview()
         self.timer.seek(self._time_stamp)
         self._resume_video_event.set()

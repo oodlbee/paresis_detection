@@ -16,7 +16,6 @@ class LoadingWindow(tk.Toplevel):
         label.pack(pady=20)
         
 
-
 class EditableListbox(tk.Listbox):
     """A listbox where you can directly edit an item via double-click"""
     def __init__(self, master, **kwargs):

@@ -1,25 +1,31 @@
-
-import os
-from typing import Callable
+import logging
 from pathlib import Path
-
 from computation.get_video_symmetries import get_video_symmetries
 
 
 def main_start(event, queue, video_file_path:str, markup_file_path:str, save_to_path:str):
     
+    # initialize output computation logger
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(filename)s/%(funcName)s] - %(levelname)s - %(message)s')
+
+    # initialize computation logger
+    comp_logger_folder = Path('computation/comp_loggers').absolute()
+    comp_logger = logging.getLogger('comp_logger')
+    comp_handler = logging.FileHandler(str(comp_logger_folder / Path('comp_logger.log')), mode='w')
+    format = logging.Formatter('%(asctime)s [%(filename)s/%(funcName)s] - %(levelname)s - %(message)s')
+    comp_handler.setFormatter(format)
+    comp_logger.addHandler(comp_handler)
+    comp_logger.setLevel(logging.DEBUG)
+    
     # Changing file paths type
     video_file_path = Path(video_file_path)
     markup_file_path = Path(markup_file_path)
     save_to_path = Path(save_to_path)
-
-    video_file_path = str(video_file_path)
-    markup_file_path = str(markup_file_path)
-
+    
     get_video_symmetries(event, queue, video_file_path, markup_file_path, save_to_path)
+    comp_logger.debug('Calculations ended successfully')
     
     
-
 
 def get_list_of_files(dir_path):
     """Makes a list of strings of file's paths from directiory"""
