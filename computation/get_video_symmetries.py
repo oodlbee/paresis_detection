@@ -2,16 +2,15 @@ import cv2
 import json 
 import logging
 import pandas as pd
-import numpy as np
 import mediapipe as mp
-from pathlib import Path
-from computation.calculate import calculate_distances, calculate_symmetries
-from computation import constants
+import constants
+from calculate import calculate_distances, calculate_symmetries
+
 
 logger = logging.getLogger('comp_logger')
 
 
-def get_video_symmetries(event, queue, video_full_file_name, markup_full_file_name, save_to_path):
+def get_video_symmetries(video_full_file_name, markup_full_file_name, save_to_path, event=None, queue=None):
     video_file_name = video_full_file_name.stem
     markup = pd.read_excel(markup_full_file_name, sheet_name=0)
     markup = markup[markup['file_name'] == video_file_name].to_dict()
@@ -68,7 +67,7 @@ def get_video_symmetries(event, queue, video_full_file_name, markup_full_file_na
             model_results = model_results[0]
             distances = calculate_distances(frame_type, distances, frame, model_results)
 
-            if frame_num % 10 == 0:
+            if (event != None) and (queue != None) and (frame_num % 10 == 0):
                 queue.put(frame_num / total_frame_num)
                 event.set()
 

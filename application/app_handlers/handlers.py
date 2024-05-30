@@ -14,15 +14,23 @@ config.read('application/app_config.ini')
 logger = logging.getLogger('app_logger')
 
 
-
-def select_save_path(entry, dirictory:bool=False, init_file_name:str='', defaultextension:str=''):
+def select_save_path(entry, dirictory:bool=False, init_dir:str='', init_file_name:str='', defaultextension:str=''):
     """Creates ask window to select files or, if directory == True, get directory name"""
+    if not Path(init_dir).is_dir():
+        logger.debug(f'Init dir {init_dir} is not definded save dir')
+        init_dir = ''
+
     if dirictory:
-        file_path = filedialog.askdirectory()
+        if init_dir == '':
+            file_path = filedialog.askdirectory()
+        else:
+            file_path = filedialog.askdirectory(initialdir=init_dir)
         logger.debug('Ask save directory window created')
     else:
-        
-        file_path = filedialog.asksaveasfilename(initialfile=init_file_name, defaultextension=defaultextension)
+        if init_dir == '':
+            file_path = filedialog.asksaveasfilename(initialfile=init_file_name, defaultextension=defaultextension)
+        else:
+            file_path = filedialog.asksaveasfilename(initialdir=init_dir, initialfile=init_file_name, defaultextension=defaultextension)
         logger.debug('Ask save file path window created')
     if file_path == None or file_path == '':
         logger.debug('Empty path, nothing changes')
@@ -34,8 +42,17 @@ def select_save_path(entry, dirictory:bool=False, init_file_name:str='', default
     return file_path
 
 
-def select_file_path(entry):
-    file_path = filedialog.askopenfilename()
+def select_file_path(entry, init_dir:str=''):
+    if not Path(init_dir).is_dir():
+        logger.debug(f'Init dir {init_dir} is not definded ask open')
+        init_dir = ''
+
+    if init_dir == '':
+        file_path = filedialog.askopenfilename()
+        logger.debug('Init dir is not definded open file')
+    else:
+        file_path = filedialog.askopenfilename(initialdir=init_dir)
+
     logger.debug('Ask open file window created')
     if file_path == None or file_path == '':
         logger.debug('Empty path, nothing changes')
@@ -83,9 +100,10 @@ def video_redecoding(input_file: Path, temp_video_file: Path, video_box: Tuple[i
     # ffmpeg command makes scalig, decreasing bitrate and
     # makes every frame - keyframe
     command = f'''{ffmpeg_path} -y -i {input_file} -vf "scale='min({widht}, iw)':'min({height}, ih)':force_original_aspect_ratio=decrease" \
-        -vsync vfr \
+        -vsync passthrough \
         -g 1 -keyint_min 1 -sc_threshold 0 -c:v libx264 -preset faster -crf 28 \
-        -c:a copy  {temp_video_file} > {ffmpeg_logger_path} 2>&1'''
+        {temp_video_file} > {ffmpeg_logger_path} 2>&1'''
+        # -c:a copy  {temp_video_file} > {ffmpeg_logger_path} 2>&1'''
 
     subprocess.run(command, shell=True)
     return temp_video_file

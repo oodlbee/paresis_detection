@@ -49,7 +49,8 @@ class ComputeWindow(tk.Toplevel):
 
         self.compute_process = Process(
             target=main_start,
-            args=[self.event_update, self.progress_queue, video_file_path, markup_file_path, save_to_path]
+            args=[video_file_path, markup_file_path, save_to_path],
+            kwargs={'event': self.event_update, 'queue': self.progress_queue}
             )
         self.compute_process.start()
         self._check_alive()
@@ -103,7 +104,6 @@ class ComputeWindow(tk.Toplevel):
         result = askyesno("Выход", "Вы хотите прервать процесс?")
         if result:
             logger.debug("Compute window closed by force by user")
-            self.parent.count_processes -= 1
             self.compute_process.kill()
             gc.collect()
             self.destroy()

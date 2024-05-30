@@ -18,12 +18,14 @@ from application.win_exercise import ExerciseWindow
 
 
 class MarkWindow(tk.Toplevel):
-    def __init__(self, parent, config, video_path):
+    def __init__(self, parent, config, init_save_folder, video_path):
         super().__init__(parent)
         self.logger = logging.getLogger('app_logger')
         self.logger.debug("Opened mark window")
         self.parent = parent
         self.video_path = video_path
+        self.init_save_folder = init_save_folder
+        self.video_name = Path(self.video_path).stem
         self.config_file = config
         self.data_folder = Path(self.config_file['internal.files']['application_data'][1:-1]).absolute()
         self.icons_folder = Path(self.config_file['internal.files']['application_icons'][1:-1]).absolute()
@@ -35,7 +37,7 @@ class MarkWindow(tk.Toplevel):
 
         self.focus_set()
         self.config(cursor="")
-        self.title('Разметка видео')   
+        self.title(f'Разметка видео {self.video_name}')   
 
         self.videoplayer = TkinterVideo(master=self, keep_aspect=True)
         self.videoplayer.load(str(temp_video_path))
@@ -150,8 +152,9 @@ class MarkWindow(tk.Toplevel):
                 return
             df_markup[exercise + '_begin'] = [self.markup_dict[exercise]['begin']]
             df_markup[exercise + '_end'] = [self.markup_dict[exercise]['end']]
-        df_markup = DataFrame(df_markup)
-        result_path = select_save_path(self.parent.entry_mark, init_file_name='markup.xlsx', defaultextension='.xlsx')
+        df_markup = DataFrame(df_markup)    
+        result_path = select_save_path(self.parent.entry_mark, init_dir=self.init_save_folder,
+                                       init_file_name=self.video_name + '_markup.xlsx', defaultextension='.xlsx')
         if result_path == None:
             self.logger.warning(f"Markup is not saved. Empty selected path")
             return

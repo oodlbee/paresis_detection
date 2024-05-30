@@ -1,4 +1,5 @@
 import logging
+import json
 from cv2 import VideoCapture
 from os import path
 from pathlib import Path
@@ -36,7 +37,11 @@ class Application(tk.Tk):
 
         icons_folder = Path(self.app_config_file['internal.files']['application_icons'][1:-1]).absolute()
         self.iconphoto(True, tk.PhotoImage(file=str(icons_folder/f'icon.png')))
-        
+
+        self.data_folder = Path(self.app_config_file['internal.files']['application_data'][1:-1]).absolute()
+        with open(str(self.data_folder/'initial_folders.json')) as file:
+            self.init_folders = json.load(file)
+
         self.video_folder = tk.StringVar()
         self.mark_folder = tk.StringVar()
         self.save_folder = tk.StringVar()
@@ -62,14 +67,21 @@ class Application(tk.Tk):
             logger.warning("Error while trying to open compute window: There are empty fields")
             showerror(title='Ошибка', message='Не все поля заполнены')
             return
-        
-        if self.count_processes > self.max_cores:
-            logger.warning("Error while trying to open compute window: Cores limit is exceeded")
-            showerror(title='Ошибка', message='Превышен лимит по количеству используемых ядер. Осталось 2 свободных ядра.')
-            return
-        ComputeWindow(self, video_file_path, markup_file_path, save_to_path)
-        self.count_processes += 1
+        self.init_folders['videos_folder'] = str(Path(video_file_path).parent)
+        self.init_folders['markup_folder'] = str(Path(markup_file_path).parent)
+        self.init_folders['save_folder'] = str(Path(save_to_path))
 
+        Path(save_to_path).mkdir(parents=True, exist_ok=True)
+
+        with open(str(self.data_folder/'initial_folders.json'), 'w') as file:
+            json.dump(self.init_folders, file)
+
+        # if self.count_processes > self.max_cores:
+        #     logger.warning("Error while trying to open compute window: Cores limit is exceeded")
+        #     showerror(title='Ошибка', message='Превышен лимит по количеству используемых ядер. Осталось 2 свободных ядра.')
+        #     return
+        ComputeWindow(self, video_file_path, markup_file_path, save_to_path)
+        # self.count_processes += 1
 
 
     def check_video_path(self):
@@ -102,7 +114,7 @@ class Application(tk.Tk):
         else:
             loading_window = LoadingWindow(self)
             self.update()
-            mark_window = MarkWindow(self, self.app_config_file, self.video_folder.get())
+            mark_window = MarkWindow(self, self.app_config_file, self.init_folders['markup_folder'], self.video_folder.get())
             loading_window.destroy()
             mark_window.grab_set()
             self.wait_window(mark_window)
@@ -120,7 +132,8 @@ class Application(tk.Tk):
             self.entry_video.focus()
             self.entry_video.grid(row=row, column=1, padx=5, pady=pady, sticky=tk.EW)
 
-            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_video), takefocus=False)
+            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_video,
+                                                                                            init_dir=self.init_folders['videos_folder']), takefocus=False)
             button_folder.grid(row=row, column=2, padx=5, pady=pady, sticky=tk.EW)
 
 
@@ -134,7 +147,8 @@ class Application(tk.Tk):
             self.entry_mark = ttk.Entry(self, width=50, textvariable=self.mark_folder, takefocus=False)
             self.entry_mark.grid(row=row, column=1, padx=(5, 5), pady=pady, sticky=tk.EW)
 
-            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_mark), takefocus=False)
+            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_file_path(self.entry_mark, 
+                                                                                            init_dir=self.init_folders['markup_folder']), takefocus=False)
             button_folder.grid(row=row, column=2, padx=5, pady=pady, sticky=tk.EW)
 
             button_marking = ttk.Button(self, text="Разметка", command=self.open_mark_window, takefocus=False)
@@ -150,7 +164,8 @@ class Application(tk.Tk):
             self.entry_save = ttk.Entry(self, width=50, textvariable=self.save_folder, takefocus=False)
             self.entry_save.grid(row=row, column=1, padx=5, pady=pady, sticky=tk.EW)
 
-            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_save_path(self.entry_save, dirictory=True), takefocus=False)
+            button_folder = ttk.Button(self, text="Поиск", command=lambda: select_save_path(self.entry_save, 
+                                                                                            init_dir=self.init_folders['save_folder'], dirictory=True), takefocus=False)
             button_folder.grid(row=row, column=2, padx=5, pady=pady, sticky=tk.EW)
 
             button_video = ttk.Button(self, text="Запуск", command=self.open_compute_window, takefocus=False)

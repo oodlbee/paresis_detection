@@ -1,9 +1,9 @@
+import constants
 import numpy as np
-from mediapipe.framework.formats.landmark_pb2 import NormalizedLandmarkList
-from computation import constants
-from computation import  utils
+import compute_utils as utils
 
-# import cv2
+from mediapipe.framework.formats.landmark_pb2 import NormalizedLandmarkList
+
 
 def calculate_distances(frame_type: str, distances: dict, image: np.array, model_results: NormalizedLandmarkList):
     size = image.shape[0: 2]
@@ -18,11 +18,13 @@ def calculate_distances(frame_type: str, distances: dict, image: np.array, model
     left_eyebrow_center = utils.calculate_geom_center(left_eyebrow_coords)
     right_eyebrow_center = utils.calculate_geom_center(right_eyebrow_coords)
 
-    normalize_dist = utils.calculate_euclidean_norm(left_eye_center, right_eye_center)
+    # normalize_dist = utils.calculate_euclidean_norm(left_eye_center, right_eye_center)
 
-    # normalize
-    left_forehead_dist = utils.calculate_euclidean_norm(left_eye_center, left_eyebrow_center) / normalize_dist
-    right_forehead_dist = utils.calculate_euclidean_norm(right_eye_center, right_eyebrow_center) / normalize_dist
+    left_forehead_dist = utils.calculate_euclidean_norm(left_eye_center, left_eyebrow_center)
+    right_forehead_dist = utils.calculate_euclidean_norm(right_eye_center, right_eyebrow_center)
+    # # normalize
+    # left_forehead_dist = utils.calculate_euclidean_norm(left_eye_center, left_eyebrow_center) / normalize_dist
+    # right_forehead_dist = utils.calculate_euclidean_norm(right_eye_center, right_eyebrow_center) / normalize_dist
 
 
 
@@ -32,9 +34,11 @@ def calculate_distances(frame_type: str, distances: dict, image: np.array, model
     right_mouth_corner = utils.get_coords(model_results,  size, constants.RIGHT_LIP_CORNER)
 
     mouth_center = utils.calculate_geom_center(mouth_coords)
+    left_mouth_dist = utils.calculate_euclidean_norm(left_mouth_corner, mouth_center)
+    right_mouth_dist = utils.calculate_euclidean_norm(right_mouth_corner, mouth_center)
 
-    left_mouth_dist = utils.calculate_euclidean_norm(left_mouth_corner, mouth_center) / normalize_dist
-    right_mouth_dist = utils.calculate_euclidean_norm(right_mouth_corner, mouth_center) / normalize_dist
+    # left_mouth_dist = utils.calculate_euclidean_norm(left_mouth_corner, mouth_center) / normalize_dist
+    # right_mouth_dist = utils.calculate_euclidean_norm(right_mouth_corner, mouth_center) / normalize_dist
 
 
     # image = cv2.circle(image, mouth_center.astype(int), 3, color=(0, 0, 255))

@@ -1,9 +1,8 @@
 import logging
 from pathlib import Path
-from computation.get_video_symmetries import get_video_symmetries
+from get_video_symmetries import get_video_symmetries
 
-
-def main_start(event, queue, video_file_path:str, markup_file_path:str, save_to_path:str):
+def main_start(video_file_path:str, markup_file_path:str, save_to_path:str, event=None, queue=None):
     
     # initialize output computation logger
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(filename)s/%(funcName)s] - %(levelname)s - %(message)s')
@@ -21,8 +20,8 @@ def main_start(event, queue, video_file_path:str, markup_file_path:str, save_to_
     video_file_path = Path(video_file_path)
     markup_file_path = Path(markup_file_path)
     save_to_path = Path(save_to_path)
-    
-    get_video_symmetries(event, queue, video_file_path, markup_file_path, save_to_path)
+
+    get_video_symmetries(video_file_path, markup_file_path, save_to_path, event=event, queue=queue)
     comp_logger.debug('Calculations ended successfully')
     
     
