@@ -1,0 +1,130 @@
+ffmpeg version 2024-01-04-git-33698ef891-full_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers
+  built with gcc 12.2.0 (Rev10, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --pkg-config=pkgconf --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-libsnappy --enable-zlib --enable-librist --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-libbluray --enable-libcaca --enable-sdl2 --enable-libaribb24 --enable-libaribcaption --enable-libdav1d --enable-libdavs2 --enable-libuavs3d --enable-libzvbi --enable-librav1e --enable-libsvtav1 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxavs2 --enable-libxvid --enable-libaom --enable-libjxl --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-frei0r --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-liblensfun --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-ffnvcodec --enable-nvdec --enable-nvenc --enable-dxva2 --enable-d3d11va --enable-libvpl --enable-libshaderc --enable-vulkan --enable-libplacebo --enable-opencl --enable-libcdio --enable-libgme --enable-libmodplug --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libshine --enable-libtheora --enable-libtwolame --enable-libvo-amrwbenc --enable-libcodec2 --enable-libilbc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-ladspa --enable-libbs2b --enable-libflite --enable-libmysofa --enable-librubberband --enable-libsoxr --enable-chromaprint
+  libavutil      58. 36.101 / 58. 36.101
+  libavcodec     60. 37.100 / 60. 37.100
+  libavformat    60. 20.100 / 60. 20.100
+  libavdevice    60.  4.100 / 60.  4.100
+  libavfilter     9. 16.100 /  9. 16.100
+  libswscale      7.  6.100 /  7.  6.100
+  libswresample   4. 13.100 /  4. 13.100
+  libpostproc    57.  4.100 / 57.  4.100
+-vsync is deprecated. Use -fps_mode
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'E:/projects/paresis_emg/videos/olshin_2_9.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: mp41isom
+    creation_time   : 2024-04-24T11:39:55.000000Z
+  Duration: 00:01:29.81, start: 0.000000, bitrate: 4076 kb/s
+  Stream #0:0[0x1](und): Video: h264 (Main) (avc1 / 0x31637661), yuvj420p(pc, progressive), 1280x720 [SAR 1:1 DAR 16:9], 3941 kb/s, 14.96 fps, 14.92 tbr, 30k tbn (default)
+      Metadata:
+        creation_time   : 2024-04-24T11:39:55.000000Z
+        handler_name    : VideoHandler
+        vendor_id       : [0][0][0][0]
+        encoder         : AVC Coding
+  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 130 kb/s (default)
+      Metadata:
+        creation_time   : 2024-04-24T11:39:55.000000Z
+        handler_name    : SoundHandler
+        vendor_id       : [0][0][0][0]
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> h264 (libx264))
+  Stream #0:1 -> #0:1 (aac (native) -> aac (native))
+Press [q] to stop, [?] for help
+[libx264 @ 0000017f5120e700] using SAR=1/1
+[libx264 @ 0000017f5120e700] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX
+[libx264 @ 0000017f5120e700] profile High, level 3.1, 4:2:0, 8-bit
+[libx264 @ 0000017f5120e700] 264 - core 164 r3172 c1c9931 - H.264/MPEG-4 AVC codec - Copyleft 2003-2023 - http://www.videolan.org/x264.html - options: cabac=1 ref=1 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=4 psy=1 psy_rd=1.00:0.00 mixed_ref=0 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=0 threads=6 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=0 weightp=0 keyint=1 keyint_min=1 scenecut=0 intra_refresh=0 rc=crf mbtree=0 crf=28.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'E:\projects\my_github\paresis_detection\application\app_data\_temp_ffmpeg.mp4':
+  Metadata:
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: mp41isom
+    encoder         : Lavf60.20.100
+  Stream #0:0(und): Video: h264 (avc1 / 0x31637661), yuvj420p(pc, progressive), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 14.92 fps, 11456 tbn (default)
+      Metadata:
+        creation_time   : 2024-04-24T11:39:55.000000Z
+        handler_name    : VideoHandler
+        vendor_id       : [0][0][0][0]
+        encoder         : Lavc60.37.100 libx264
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+  Stream #0:1(und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 128 kb/s (default)
+      Metadata:
+        creation_time   : 2024-04-24T11:39:55.000000Z
+        handler_name    : SoundHandler
+        vendor_id       : [0][0][0][0]
+        encoder         : Lavc60.37.100 aac
+frame=   62 fps=0.0 q=29.0 size=     768kB time=00:00:04.15 bitrate=1513.8kbits/s speed=8.06x    frame=  131 fps=127 q=30.0 size=    1792kB time=00:00:08.78 bitrate=1671.6kbits/s speed=8.53x    [libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+    Last message repeated 1 times
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 125184, current: 125184; changing to 125185. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 129024, current: 129024; changing to 129025. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 133632, current: 133632; changing to 133633. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 137472, current: 137472; changing to 137473. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 141312, current: 141312; changing to 141313. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 145920, current: 145920; changing to 145921. This may result in incorrect timestamps in the output file.
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 149760, current: 149760; changing to 149761. This may result in incorrect timestamps in the output file.
+frame=  197 fps=127 q=30.0 size=    2560kB time=00:00:13.13 bitrate=1596.1kbits/s speed=8.47x    frame=  265 fps=128 q=29.0 size=    3584kB time=00:00:17.69 bitrate=1658.9kbits/s speed=8.56x    frame=  333 fps=129 q=29.0 size=    4352kB time=00:00:22.25 bitrate=1601.8kbits/s speed=8.59x    frame=  402 fps=129 q=29.0 size=    5376kB time=00:00:26.88 bitrate=1638.3kbits/s speed=8.63x    frame=  469 fps=129 q=29.0 size=    6400kB time=00:00:31.37 bitrate=1671.1kbits/s speed=8.64x    [libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+    Last message repeated 1 times
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 384000, current: 384000; changing to 384001. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 387840, current: 387840; changing to 387841. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 392448, current: 392448; changing to 392449. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 396288, current: 396288; changing to 396289. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 400128, current: 400128; changing to 400129. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 403968, current: 403968; changing to 403969. This may result in incorrect timestamps in the output file.
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 408576, current: 408576; changing to 408577. This may result in incorrect timestamps in the output file.
+frame=  540 fps=130 q=29.0 size=    7168kB time=00:00:36.06 bitrate=1628.1kbits/s speed=8.68x    [libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+frame=  608 fps=130 q=34.0 size=    8192kB time=00:00:40.62 bitrate=1651.9kbits/s speed= 8.7x    [vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 469248, current: 469248; changing to 469249. This may result in incorrect timestamps in the output file.
+frame=  678 fps=131 q=29.0 size=    8960kB time=00:00:45.31 bitrate=1619.7kbits/s speed=8.74x    frame=  746 fps=130 q=29.0 size=    9984kB time=00:00:49.87 bitrate=1639.8kbits/s speed=8.72x    [libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+    Last message repeated 1 times
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 582144, current: 582144; changing to 582145. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 585984, current: 585984; changing to 585985. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 590592, current: 590592; changing to 590593. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 594432, current: 594432; changing to 594433. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 598272, current: 598272; changing to 598273. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 602880, current: 602880; changing to 602881. This may result in incorrect timestamps in the output file.
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 606720, current: 606720; changing to 606721. This may result in incorrect timestamps in the output file.
+frame=  815 fps=131 q=29.0 size=   10752kB time=00:00:54.43 bitrate=1618.1kbits/s speed=8.73x    [libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 658944, current: 658944; changing to 658945. This may result in incorrect timestamps in the output file.
+frame=  883 fps=131 q=29.0 size=   11776kB time=00:00:58.99 bitrate=1635.2kbits/s speed=8.74x    [libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+    Last message repeated 1 times
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 719616, current: 719616; changing to 719617. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 723456, current: 723456; changing to 723457. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+frame=  951 fps=131 q=34.0 size=   12544kB time=00:01:03.62 bitrate=1615.2kbits/s speed=8.75x    [vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 728064, current: 728064; changing to 728065. This may result in incorrect timestamps in the output file.
+[libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 731904, current: 731904; changing to 731905. This may result in incorrect timestamps in the output file.
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 735744, current: 735744; changing to 735745. This may result in incorrect timestamps in the output file.
+frame= 1019 fps=131 q=29.0 size=   13568kB time=00:01:08.11 bitrate=1631.9kbits/s speed=8.73x    frame= 1087 fps=131 q=29.0 size=   14336kB time=00:01:12.67 bitrate=1616.1kbits/s speed=8.73x    frame= 1164 fps=131 q=29.0 size=   15360kB time=00:01:17.83 bitrate=1616.7kbits/s speed=8.79x    [libx264 @ 0000017f5120e700] non-strictly-monotonic PTS
+    Last message repeated 1 times
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 910080, current: 910080; changing to 910081. This may result in incorrect timestamps in the output file.
+[vost#0:0/libx264 @ 0000017f51975cc0] Non-monotonic DTS; previous: 913920, current: 913920; changing to 913921. This may result in incorrect timestamps in the output file.
+frame= 1240 fps=132 q=29.0 size=   16384kB time=00:01:22.86 bitrate=1619.8kbits/s speed=8.83x    frame= 1312 fps=132 q=30.0 size=   17408kB time=00:01:27.75 bitrate=1625.1kbits/s speed=8.86x    [out#0/mp4 @ 0000017f5116a3c0] video:17255kB audio:830kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.384332%
+frame= 1343 fps=133 q=-1.0 Lsize=   18155kB time=00:01:29.76 bitrate=1656.8kbits/s speed= 8.9x    
+[libx264 @ 0000017f5120e700] frame I:1343  Avg QP:22.04  size: 13156
+[libx264 @ 0000017f5120e700] mb I  I16..4: 66.8% 25.9%  7.3%
+[libx264 @ 0000017f5120e700] 8x8 transform intra:25.9%
+[libx264 @ 0000017f5120e700] coded y,uvDC,uvAC intra: 23.7% 36.5% 2.8%
+[libx264 @ 0000017f5120e700] i16 v,h,dc,p: 79% 13%  5%  3%
+[libx264 @ 0000017f5120e700] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 24% 17% 22%  6%  5%  8%  5%  7%  7%
+[libx264 @ 0000017f5120e700] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 29% 12% 18%  6%  6% 13%  5%  5%  6%
+[libx264 @ 0000017f5120e700] i8c dc,h,v,p: 63% 18% 17%  2%
+[libx264 @ 0000017f5120e700] kb/s:1573.48
+[aac @ 0000017f511ecc80] Qavg: 54602.969

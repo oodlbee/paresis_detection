@@ -1,0 +1,7 @@
+2024-06-06 00:13:49,421 [get_video_symmetries.py/get_video_symmetries] - DEBUG - Model initializied successfully
+2024-06-06 00:13:50,075 [get_video_symmetries.py/get_video_symmetries] - DEBUG - Cv2 cap initializied successfully
+2024-06-06 00:14:04,175 [get_video_symmetries.py/get_video_symmetries] - INFO - Can't receive frame or End of stream
+2024-06-06 00:14:04,198 [get_video_symmetries.py/get_video_symmetries] - DEBUG - Cv2 cap released
+2024-06-06 00:14:04,231 [get_video_symmetries.py/get_video_symmetries] - DEBUG - Distances saved on <_io.TextIOWrapper name='E:\\projects\\paresis_emg\\distances.json' mode='w' encoding='cp1251'>
+2024-06-06 00:14:04,233 [get_video_symmetries.py/get_video_symmetries] - DEBUG - Symmetries saved on <_io.TextIOWrapper name='E:\\projects\\paresis_emg\\symmetries.json' mode='w' encoding='cp1251'>
+2024-06-06 00:14:04,239 [start_calculations.py/main_start] - DEBUG - Calculations ended successfully
