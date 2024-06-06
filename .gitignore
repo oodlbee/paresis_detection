@@ -7,3 +7,7 @@ application/app_data/_temp_ffmpeg.mp4
 pares_venv/
 paresis_venv/
 application/app_data/_temp_ffmpeg.mp4
+application/app_loggers/*
+computation/comp_loggers/*
+
+
