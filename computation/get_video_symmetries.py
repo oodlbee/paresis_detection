@@ -1,11 +1,11 @@
 import cv2
 import json 
 import logging
+import constants
 import pandas as pd
 import mediapipe as mp
-import constants
+from copy import deepcopy
 from calculate import calculate_distances, calculate_symmetries
-
 
 logger = logging.getLogger('comp_logger')
 
@@ -15,7 +15,7 @@ def get_video_symmetries(video_full_file_name, markup_full_file_name, save_to_pa
     markup = pd.read_excel(markup_full_file_name, sheet_name=0)
     markup = markup[markup['file_name'] == video_file_name].to_dict()
 
-    exercises_dict = constants.EXCERCISE_DICT
+    exercises_dict = deepcopy(constants.EXCERCISE_DICT)
     # Stucture of dict: {exercise name: [begin frama num, end frame num], ...}
 
     for exercise in exercises_dict.keys():
@@ -38,7 +38,7 @@ def get_video_symmetries(video_full_file_name, markup_full_file_name, save_to_pa
         
         logger.debug('Cv2 cap initializied successfully')
         
-        distances = constants.DISTANCES_EMPTY_DICT
+        distances = deepcopy(constants.DISTANCES_EMPTY_DICT)
         frame_num = 0
         while cap.isOpened():
             ret, frame = cap.read()

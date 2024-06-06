@@ -1,8 +1,10 @@
 import constants
 import numpy as np
+import logging
 import compute_utils as utils
-
 from mediapipe.framework.formats.landmark_pb2 import NormalizedLandmarkList
+
+logger = logging.getLogger('comp_logger')
 
 
 def calculate_distances(frame_type: str, distances: dict, image: np.array, model_results: NormalizedLandmarkList):
@@ -10,8 +12,11 @@ def calculate_distances(frame_type: str, distances: dict, image: np.array, model
 
     left_eye_coords = utils.get_coords(model_results,  size, constants.LEFT_EYE_POINTS)
     right_eye_coords = utils.get_coords(model_results,  size, constants.RIGHT_EYE_POINTS)
-    left_eyebrow_coords = utils.get_coords(model_results,  size, constants.LEFT_EYEBROW_POINTS)
-    right_eyebrow_coords = utils.get_coords(model_results,  size, constants.RIGHT_EYEBROW_POINTS)
+    # left_eyebrow_coords = utils.get_coords(model_results,  size, constants.LEFT_EYEBROW_POINTS)
+    # right_eyebrow_coords = utils.get_coords(model_results,  size, constants.RIGHT_EYEBROW_POINTS)
+
+    left_eyebrow_coords = utils.get_coords(model_results,  size, constants.LEFT_TOP_EYEBROW_POINTS)
+    right_eyebrow_coords = utils.get_coords(model_results,  size, constants.RIGHT_TOP_EYEBROW_POINTS)
 
     left_eye_center = utils.calculate_geom_center(left_eye_coords)
     right_eye_center = utils.calculate_geom_center(right_eye_coords)
@@ -95,16 +100,16 @@ def calculate_symmetries(distances):
         if distances[exercise]['forehead']['left'] == []:
             continue
 
-        left_bias_forehead = max(np.abs(np.array(distances[exercise]['forehead']['left']) - distances['rest']['forehead']['left']))
-        right_bias_forehead = max(np.abs(np.array(distances[exercise]['forehead']['right']) - distances['rest']['forehead']['right']))
+        left_bias_forehead = np.max(np.abs(np.array(distances[exercise]['forehead']['left']) - distances['rest']['forehead']['left']))
+        right_bias_forehead = np.max(np.abs(np.array(distances[exercise]['forehead']['right']) - distances['rest']['forehead']['right']))
 
         if (left_bias_forehead == 0) or (right_bias_forehead == 0):
             forehead_symmetry = 0
         else:
             forehead_symmetry = left_bias_forehead / right_bias_forehead if right_bias_forehead > left_bias_forehead else right_bias_forehead / left_bias_forehead
 
-        left_bias_mouth= max(np.abs(np.array(distances[exercise]['mouth']['left']) - distances['rest']['mouth']['left']))
-        right_bias_mouth = max(np.abs(np.array(distances[exercise]['mouth']['right']) - distances['rest']['mouth']['right']))
+        left_bias_mouth= np.max(np.abs(np.array(distances[exercise]['mouth']['left']) - distances['rest']['mouth']['left']))
+        right_bias_mouth = np.max(np.abs(np.array(distances[exercise]['mouth']['right']) - distances['rest']['mouth']['right']))
 
         if (left_bias_mouth == 0) or (right_bias_mouth == 0):
             mouth_symmetry = 0
