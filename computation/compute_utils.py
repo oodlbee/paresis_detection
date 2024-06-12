@@ -7,6 +7,11 @@ def get_coords(landmarks: NormalizedLandmarkList, init_image_shape: Tuple[int, i
     image_hight, image_width = init_image_shape
     return np.array([(landmarks.landmark[idx].x * image_width, landmarks.landmark[idx].y * image_hight) for idx in  points]).astype(int)
 
+def get_3d_coords(landmarks: NormalizedLandmarkList, init_image_shape: Tuple[int, int], points: list) -> np.array:
+    image_hight, image_width = init_image_shape
+    return np.array([
+        (landmarks.landmark[idx].x * image_width, landmarks.landmark[idx].y * image_width, landmarks.landmark[idx].z * image_hight) for idx in  points]
+        ).astype(int)
 
 def calculate_geom_center(point_group: np.array):
     return np.mean(point_group, axis=0)

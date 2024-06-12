@@ -10,13 +10,13 @@ logger = logging.getLogger('comp_logger')
 def calculate_distances(frame_type: str, distances: dict, image: np.array, model_results: NormalizedLandmarkList):
     size = image.shape[0: 2]
 
-    left_eye_coords = utils.get_coords(model_results,  size, constants.LEFT_EYE_POINTS)
-    right_eye_coords = utils.get_coords(model_results,  size, constants.RIGHT_EYE_POINTS)
-    # left_eyebrow_coords = utils.get_coords(model_results,  size, constants.LEFT_EYEBROW_POINTS)
-    # right_eyebrow_coords = utils.get_coords(model_results,  size, constants.RIGHT_EYEBROW_POINTS)
+    left_eye_coords = utils.get_3d_coords(model_results,  size, constants.LEFT_EYE_POINTS)
+    right_eye_coords = utils.get_3d_coords(model_results,  size, constants.RIGHT_EYE_POINTS)
+    # left_eyebrow_coords = utils.get_3d_coords(model_results,  size, constants.LEFT_EYEBROW_POINTS)
+    # right_eyebrow_coords = utils.get_3d_coords(model_results,  size, constants.RIGHT_EYEBROW_POINTS)
 
-    left_eyebrow_coords = utils.get_coords(model_results,  size, constants.LEFT_TOP_EYEBROW_POINTS)
-    right_eyebrow_coords = utils.get_coords(model_results,  size, constants.RIGHT_TOP_EYEBROW_POINTS)
+    left_eyebrow_coords = utils.get_3d_coords(model_results,  size, constants.LEFT_TOP_EYEBROW_POINTS)
+    right_eyebrow_coords = utils.get_3d_coords(model_results,  size, constants.RIGHT_TOP_EYEBROW_POINTS)
 
     left_eye_center = utils.calculate_geom_center(left_eye_coords)
     right_eye_center = utils.calculate_geom_center(right_eye_coords)
@@ -34,9 +34,9 @@ def calculate_distances(frame_type: str, distances: dict, image: np.array, model
 
 
     # mouth
-    mouth_coords = utils.get_coords(model_results,  size, constants.LIPS_POINTS)
-    left_mouth_corner = utils.get_coords(model_results,  size, constants.LEFT_LIP_CORNER)
-    right_mouth_corner = utils.get_coords(model_results,  size, constants.RIGHT_LIP_CORNER)
+    mouth_coords = utils.get_3d_coords(model_results,  size, constants.LIPS_POINTS)
+    left_mouth_corner = utils.get_3d_coords(model_results,  size, constants.LEFT_LIP_CORNER)
+    right_mouth_corner = utils.get_3d_coords(model_results,  size, constants.RIGHT_LIP_CORNER)
 
     mouth_center = utils.calculate_geom_center(mouth_coords)
     left_mouth_dist = utils.calculate_euclidean_norm(left_mouth_corner, mouth_center)

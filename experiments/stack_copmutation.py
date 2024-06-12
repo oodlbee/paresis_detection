@@ -1,4 +1,5 @@
 import sys
+import os
 from pathlib import Path
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
@@ -11,7 +12,7 @@ from computation.start_calculations import main_start
 if __name__ == '__main__':
     video_folder = Path('E:\\projects\\paresis_emg\\videos')
     markup_folder = Path('E:\\projects\\paresis_emg\\markup')
-    save_folder = Path('E:\\projects\\paresis_emg\\results_top_eyebrow_clahed')
+    save_folder = Path('E:\\projects\\paresis_emg\\results_by_3d_old_eyebrow')
 
     args = []
     for video in video_folder.iterdir():
@@ -23,7 +24,7 @@ if __name__ == '__main__':
                 save_to_path.mkdir(parents=True, exist_ok=True)
                 args.append((str(video), str(markup), str(save_to_path)))
                 continue
-    pool = Pool()
+    pool = Pool(os.cpu_count() - 1)
     pool.starmap(main_start, args)
 
 # for video in tqdm(video_markup_dict):

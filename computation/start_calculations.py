@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from get_video_symmetries import get_video_symmetries
 
+
 def main_start(video_file_path:str, markup_file_path:str, save_to_path:str, event=None, queue=None):
     
     # initialize output computation logger
@@ -10,7 +11,7 @@ def main_start(video_file_path:str, markup_file_path:str, save_to_path:str, even
     # initialize computation logger
     comp_logger_folder = Path('computation/comp_loggers').absolute()
     comp_logger = logging.getLogger('comp_logger')
-    comp_handler = logging.FileHandler(str(comp_logger_folder / Path('comp_logger.log')), mode='w')
+    comp_handler = logging.FileHandler(str(comp_logger_folder / Path('comp_logger.log')), mode='a')
     format = logging.Formatter('%(asctime)s [%(filename)s/%(funcName)s] - %(levelname)s - %(message)s')
     comp_handler.setFormatter(format)
     comp_logger.addHandler(comp_handler)

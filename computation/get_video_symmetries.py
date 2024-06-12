@@ -4,12 +4,15 @@ import logging
 import constants
 import pandas as pd
 import mediapipe as mp
+from utils import timed_log
 from copy import deepcopy
 from calculate import calculate_distances, calculate_symmetries
 
 logger = logging.getLogger('comp_logger')
 
 
+
+@timed_log(logger)
 def get_video_symmetries(video_full_file_name, markup_full_file_name, save_to_path, event=None, queue=None):
     video_file_name = video_full_file_name.stem
     markup = pd.read_excel(markup_full_file_name, sheet_name=0)
