@@ -21,6 +21,10 @@ if __name__ == "__main__":
     app_logger.addHandler(app_handler)
     app_logger.setLevel(logging.DEBUG)
 
+    # clear computation logger
+    with open(Path('computation\\comp_loggers\\comp_logger.log'), 'w'):
+        pass
+
 
     # run application
     application = Application(app_config)

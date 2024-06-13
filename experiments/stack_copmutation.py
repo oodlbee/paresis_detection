@@ -10,6 +10,9 @@ from computation.start_calculations import main_start
 
 
 if __name__ == '__main__':
+    # clear computation logger
+    with open(Path('computation\\comp_loggers\\comp_logger.log'), 'w'):
+        pass
     video_folder = Path('E:\\projects\\paresis_emg\\videos')
     markup_folder = Path('E:\\projects\\paresis_emg\\markup')
     save_folder = Path('E:\\projects\\paresis_emg\\results_by_3d_old_eyebrow')
@@ -25,6 +28,7 @@ if __name__ == '__main__':
                 args.append((str(video), str(markup), str(save_to_path)))
                 continue
     pool = Pool(os.cpu_count() - 1)
+    pool = Pool(1)
     pool.starmap(main_start, args)
 
 # for video in tqdm(video_markup_dict):

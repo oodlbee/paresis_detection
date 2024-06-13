@@ -24,6 +24,7 @@ def main_start(video_file_path:str, markup_file_path:str, save_to_path:str, even
 
     get_video_symmetries(video_file_path, markup_file_path, save_to_path, event=event, queue=queue)
     comp_logger.debug('Calculations ended successfully')
+    logging.getLogger().manager.loggerDict.pop(comp_logger.name, None)
     
     
 

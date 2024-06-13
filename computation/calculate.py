@@ -87,10 +87,10 @@ def calculate_symmetries(distances):
     distances['rest']['mouth']['left'] /= distances['rest']['count_frames']
     distances['rest']['mouth']['right'] /= distances['rest']['count_frames']
 
-    distances['rest']['forehead']['left'] = distances['rest']['forehead']['left']
-    distances['rest']['forehead']['right'] = distances['rest']['forehead']['right']
-    distances['rest']['mouth']['left'] = distances['rest']['mouth']['left']
-    distances['rest']['mouth']['right'] = distances['rest']['mouth']['right']
+    # distances['rest']['forehead']['left'] = distances['rest']['forehead']['left']
+    # distances['rest']['forehead']['right'] = distances['rest']['forehead']['right']
+    # distances['rest']['mouth']['left'] = distances['rest']['mouth']['left']
+    # distances['rest']['mouth']['right'] = distances['rest']['mouth']['right']
 
     for exercise in exersice_symmetries.keys():
         if exercise == 'rest':
