@@ -10,109 +10,56 @@ ffmpeg version 2024-01-04-git-33698ef891-full_build-www.gyan.dev Copyright (c) 2
   libswresample   4. 13.100 /  4. 13.100
   libpostproc    57.  4.100 / 57.  4.100
 -vsync is deprecated. Use -fps_mode
-Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'E:/projects/paresis_emg/videos/olshin_2_2.mp4':
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'E:/projects/mediapipe/data/video_patients/20170503_Ермоленко.mov':
   Metadata:
-    major_brand     : mp42
-    minor_version   : 0
-    compatible_brands: mp41isom
-    creation_time   : 2024-04-24T11:25:49.000000Z
-  Duration: 00:01:31.62, start: 0.000000, bitrate: 4076 kb/s
-  Stream #0:0[0x1](und): Video: h264 (Main) (avc1 / 0x31637661), yuvj420p(pc, progressive), 1280x720 [SAR 1:1 DAR 16:9], 3941 kb/s, 14.96 fps, 14.99 tbr, 30k tbn (default)
+    major_brand     : qt  
+    minor_version   : 512
+    compatible_brands: qt  
+    encoder         : Lavf57.82.100
+  Duration: 00:01:59.10, start: 0.000000, bitrate: 7541 kb/s
+  Stream #0:0[0x1](rus): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 192 kb/s (default)
       Metadata:
-        creation_time   : 2024-04-24T11:25:49.000000Z
-        handler_name    : VideoHandler
-        vendor_id       : [0][0][0][0]
-        encoder         : AVC Coding
-  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 129 kb/s (default)
-      Metadata:
-        creation_time   : 2024-04-24T11:25:49.000000Z
         handler_name    : SoundHandler
         vendor_id       : [0][0][0][0]
+  Stream #0:1[0x2](rus): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1920x1080, 7344 kb/s, 24 fps, 24 tbr, 12288 tbn (default)
+      Metadata:
+        handler_name    : VideoHandler
+        vendor_id       : FFMP
+        encoder         : Lavc57.106.101 libx264
 Stream mapping:
-  Stream #0:0 -> #0:0 (h264 (native) -> h264 (libx264))
-  Stream #0:1 -> #0:1 (aac (native) -> aac (native))
+  Stream #0:1 -> #0:0 (h264 (native) -> h264 (libx264))
+  Stream #0:0 -> #0:1 (aac (native) -> aac (native))
 Press [q] to stop, [?] for help
-[libx264 @ 00000284760d72c0] using SAR=1/1
-[libx264 @ 00000284760d72c0] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX
-[libx264 @ 00000284760d72c0] profile High, level 3.1, 4:2:0, 8-bit
-[libx264 @ 00000284760d72c0] 264 - core 164 r3172 c1c9931 - H.264/MPEG-4 AVC codec - Copyleft 2003-2023 - http://www.videolan.org/x264.html - options: cabac=1 ref=1 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=4 psy=1 psy_rd=1.00:0.00 mixed_ref=0 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=0 threads=6 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=0 weightp=0 keyint=1 keyint_min=1 scenecut=0 intra_refresh=0 rc=crf mbtree=0 crf=28.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+[libx264 @ 000001eb5cd60840] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX
+[libx264 @ 000001eb5cd60840] profile High, level 3.1, 4:2:0, 8-bit
+[libx264 @ 000001eb5cd60840] 264 - core 164 r3172 c1c9931 - H.264/MPEG-4 AVC codec - Copyleft 2003-2023 - http://www.videolan.org/x264.html - options: cabac=1 ref=1 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=4 psy=1 psy_rd=1.00:0.00 mixed_ref=0 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=0 threads=6 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=0 weightp=0 keyint=1 keyint_min=1 scenecut=0 intra_refresh=0 rc=crf mbtree=0 crf=28.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
 Output #0, mp4, to 'E:\projects\my_github\paresis_detection\application\app_data\_temp_ffmpeg.mp4':
   Metadata:
-    major_brand     : mp42
-    minor_version   : 0
-    compatible_brands: mp41isom
+    major_brand     : qt  
+    minor_version   : 512
+    compatible_brands: qt  
     encoder         : Lavf60.20.100
-  Stream #0:0(und): Video: h264 (avc1 / 0x31637661), yuvj420p(pc, progressive), 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 14.99 fps, 15k tbn (default)
+  Stream #0:0(rus): Video: h264 (avc1 / 0x31637661), yuv420p(progressive), 1280x720, q=2-31, 24 fps, 12288 tbn (default)
       Metadata:
-        creation_time   : 2024-04-24T11:25:49.000000Z
         handler_name    : VideoHandler
-        vendor_id       : [0][0][0][0]
+        vendor_id       : FFMP
         encoder         : Lavc60.37.100 libx264
       Side data:
         cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
-  Stream #0:1(und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 128 kb/s (default)
+  Stream #0:1(rus): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 128 kb/s (default)
       Metadata:
-        creation_time   : 2024-04-24T11:25:49.000000Z
         handler_name    : SoundHandler
         vendor_id       : [0][0][0][0]
         encoder         : Lavc60.37.100 aac
-frame=   43 fps=0.0 q=30.0 size=     512kB time=00:00:02.86 bitrate=1461.8kbits/s speed=5.49x    frame=   97 fps= 94 q=29.0 size=    1280kB time=00:00:06.47 bitrate=1619.9kbits/s speed=6.25x    frame=  156 fps=100 q=29.0 size=    2048kB time=00:00:10.41 bitrate=1611.6kbits/s speed=6.65x    frame=  210 fps=101 q=29.0 size=    2816kB time=00:00:14.01 bitrate=1646.1kbits/s speed=6.74x    [libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-    Last message repeated 1 times
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 228228, current: 228228; changing to 228229. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 234234, current: 234234; changing to 234235. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 240240, current: 240240; changing to 240241. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 246246, current: 246246; changing to 246247. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 252252, current: 252252; changing to 252253. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 258258, current: 258258; changing to 258259. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 263263, current: 263263; changing to 263264. This may result in incorrect timestamps in the output file.
-frame=  264 fps=102 q=34.0 size=    3584kB time=00:00:17.61 bitrate=1666.5kbits/s speed=6.78x    [libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 269269, current: 269269; changing to 269270. This may result in incorrect timestamps in the output file.
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 275275, current: 275275; changing to 275276. This may result in incorrect timestamps in the output file.
-frame=  318 fps=102 q=30.0 size=    4096kB time=00:00:21.28 bitrate=1576.2kbits/s speed=6.85x    frame=  377 fps=104 q=30.0 size=    4864kB time=00:00:25.22 bitrate=1579.6kbits/s speed=6.95x    frame=  430 fps=104 q=30.0 size=    5632kB time=00:00:28.76 bitrate=1604.1kbits/s speed=6.93x    frame=  485 fps=104 q=29.0 size=    6400kB time=00:00:32.43 bitrate=1616.6kbits/s speed=6.94x    frame=  534 fps=103 q=30.0 size=    6912kB time=00:00:35.70 bitrate=1586.0kbits/s speed=6.88x    frame=  588 fps=103 q=29.0 size=    7680kB time=00:00:39.30 bitrate=1600.6kbits/s speed=6.89x    frame=  643 fps=103 q=30.0 size=    8448kB time=00:00:42.97 bitrate=1610.3kbits/s speed=6.89x    frame=  687 fps=102 q=30.0 size=    8960kB time=00:00:45.91 bitrate=1598.7kbits/s speed=6.79x    frame=  727 fps=100 q=30.0 size=    9472kB time=00:00:48.58 bitrate=1597.2kbits/s speed=6.68x    frame=  776 fps= 99 q=30.0 size=   10240kB time=00:00:51.85 bitrate=1617.8kbits/s speed=6.65x    frame=  804 fps= 96 q=30.0 size=   10496kB time=00:00:53.25 bitrate=1614.6kbits/s speed=6.39x    [libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-    Last message repeated 1 times
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 820820, current: 820820; changing to 820821. This may result in incorrect timestamps in the output file.
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 825825, current: 825825; changing to 825826. This may result in incorrect timestamps in the output file.
-frame=  832 fps= 92 q=29.0 size=   11008kB time=00:00:55.65 bitrate=1620.3kbits/s speed=6.18x    frame=  863 fps= 90 q=30.0 size=   11264kB time=00:00:57.72 bitrate=1598.5kbits/s speed=6.05x    frame=  912 fps= 91 q=30.0 size=   12032kB time=00:01:00.99 bitrate=1616.0kbits/s speed=6.06x    frame=  947 fps= 89 q=30.0 size=   12544kB time=00:01:03.32 bitrate=1622.6kbits/s speed=5.94x    frame=  986 fps= 88 q=29.0 size=   13056kB time=00:01:05.93 bitrate=1622.2kbits/s speed=5.89x    frame= 1025 fps= 87 q=30.0 size=   13568kB time=00:01:08.53 bitrate=1621.8kbits/s speed=5.85x    [libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-    Last message repeated 1 times
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1043042, current: 1043042; changing to 1043043. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1049048, current: 1049048; changing to 1049049. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1055054, current: 1055054; changing to 1055055. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1061060, current: 1061060; changing to 1061061. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1066065, current: 1066065; changing to 1066066. This may result in incorrect timestamps in the output file.
-frame= 1064 fps= 87 q=34.0 size=   14080kB time=00:01:11.13 bitrate=1621.4kbits/s speed=5.81x    [libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1072071, current: 1072071; changing to 1072072. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1078077, current: 1078077; changing to 1078078. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1084083, current: 1084083; changing to 1084084. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1090089, current: 1090089; changing to 1090090. This may result in incorrect timestamps in the output file.
-[libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1096095, current: 1096095; changing to 1096096. This may result in incorrect timestamps in the output file.
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1102101, current: 1102101; changing to 1102102. This may result in incorrect timestamps in the output file.
-frame= 1104 fps= 86 q=29.0 size=   14592kB time=00:01:13.54 bitrate=1625.5kbits/s speed=5.76x    [libx264 @ 00000284760d72c0] non-strictly-monotonic PTS
-    Last message repeated 1 times
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1119118, current: 1119118; changing to 1119119. This may result in incorrect timestamps in the output file.
-[vost#0:0/libx264 @ 0000028475825f80] Non-monotonic DTS; previous: 1125124, current: 1125124; changing to 1125125. This may result in incorrect timestamps in the output file.
-frame= 1138 fps= 85 q=29.0 size=   14848kB time=00:01:16.14 bitrate=1597.5kbits/s speed= 5.7x    frame= 1167 fps= 84 q=29.0 size=   15360kB time=00:01:18.07 bitrate=1611.6kbits/s speed=5.61x    frame= 1200 fps= 83 q=29.0 size=   15872kB time=00:01:19.94 bitrate=1626.4kbits/s speed=5.54x    frame= 1224 fps= 81 q=29.0 size=   16128kB time=00:01:21.88 bitrate=1613.6kbits/s speed=5.45x    frame= 1259 fps= 81 q=29.0 size=   16640kB time=00:01:24.21 bitrate=1618.6kbits/s speed=5.42x    frame= 1288 fps= 80 q=29.0 size=   17152kB time=00:01:26.15 bitrate=1630.9kbits/s speed=5.36x    frame= 1317 fps= 79 q=29.0 size=   17408kB time=00:01:28.08 bitrate=1618.9kbits/s speed= 5.3x    frame= 1346 fps= 78 q=30.0 size=   17920kB time=00:01:30.02 bitrate=1630.7kbits/s speed=5.25x    [out#0/mp4 @ 000002847580af00] video:17531kB audio:849kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.381994%
-frame= 1370 fps= 78 q=-1.0 Lsize=   18450kB time=00:01:31.55 bitrate=1650.8kbits/s speed=5.24x    
-[libx264 @ 00000284760d72c0] frame I:1370  Avg QP:22.16  size: 13103
-[libx264 @ 00000284760d72c0] mb I  I16..4: 63.0% 29.8%  7.2%
-[libx264 @ 00000284760d72c0] 8x8 transform intra:29.8%
-[libx264 @ 00000284760d72c0] coded y,uvDC,uvAC intra: 25.2% 32.6% 2.7%
-[libx264 @ 00000284760d72c0] i16 v,h,dc,p: 78% 13%  5%  4%
-[libx264 @ 00000284760d72c0] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 23% 16% 26%  5%  5%  8%  5%  6%  6%
-[libx264 @ 00000284760d72c0] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 28% 12% 19%  6%  6% 13%  5%  5%  5%
-[libx264 @ 00000284760d72c0] i8c dc,h,v,p: 67% 16% 15%  2%
-[libx264 @ 00000284760d72c0] kb/s:1567.35
-[aac @ 00000284762a5bc0] Qavg: 53825.105
+frame=   69 fps=0.0 q=32.0 size=     512kB time=00:00:02.87 bitrate=1459.0kbits/s speed=5.48x    frame=  155 fps=149 q=32.0 size=    1280kB time=00:00:06.33 bitrate=1655.7kbits/s speed=6.08x    frame=  242 fps=153 q=32.0 size=    2048kB time=00:00:09.91 bitrate=1691.9kbits/s speed=6.28x    frame=  333 fps=157 q=32.0 size=    2816kB time=00:00:13.58 bitrate=1698.3kbits/s speed=6.39x    frame=  414 fps=154 q=32.0 size=    3584kB time=00:00:17.25 bitrate=1702.1kbits/s speed=6.41x    frame=  498 fps=155 q=32.0 size=    4352kB time=00:00:20.70 bitrate=1721.6kbits/s speed=6.43x    frame=  583 fps=156 q=32.0 size=    5120kB time=00:00:24.20 bitrate=1732.6kbits/s speed=6.47x    frame=  662 fps=155 q=32.0 size=    5888kB time=00:00:27.58 bitrate=1748.7kbits/s speed=6.44x    frame=  742 fps=154 q=32.0 size=    6912kB time=00:00:30.91 bitrate=1831.5kbits/s speed=6.43x    frame=  832 fps=156 q=32.0 size=    7680kB time=00:00:34.50 bitrate=1823.6kbits/s speed=6.45x    frame=  915 fps=155 q=32.0 size=    8448kB time=00:00:38.12 bitrate=1815.2kbits/s speed=6.46x    frame=  998 fps=155 q=32.0 size=    9216kB time=00:00:41.58 bitrate=1815.6kbits/s speed=6.48x    frame= 1063 fps=153 q=32.0 size=    9728kB time=00:00:44.29 bitrate=1799.3kbits/s speed=6.38x    frame= 1126 fps=151 q=32.0 size=   10240kB time=00:00:46.91 bitrate=1788.0kbits/s speed=6.28x    frame= 1197 fps=150 q=32.0 size=   11008kB time=00:00:49.70 bitrate=1814.1kbits/s speed=6.22x    frame= 1280 fps=149 q=32.0 size=   11776kB time=00:00:53.33 bitrate=1808.8kbits/s speed=6.23x    frame= 1362 fps=150 q=31.0 size=   12544kB time=00:00:56.75 bitrate=1810.8kbits/s speed=6.24x    frame= 1453 fps=151 q=31.0 size=   13312kB time=00:01:00.37 bitrate=1806.2kbits/s speed=6.28x    frame= 1537 fps=151 q=31.0 size=   14080kB time=00:01:03.91 bitrate=1804.6kbits/s speed=6.28x    frame= 1633 fps=152 q=31.0 size=   14848kB time=00:01:07.91 bitrate=1790.9kbits/s speed=6.32x    frame= 1728 fps=153 q=31.0 size=   15616kB time=00:01:11.91 bitrate=1778.8kbits/s speed=6.36x    frame= 1825 fps=154 q=31.0 size=   16640kB time=00:01:15.75 bitrate=1799.5kbits/s speed=6.39x    frame= 1913 fps=154 q=31.0 size=   17408kB time=00:01:19.70 bitrate=1789.1kbits/s speed=6.42x    frame= 2001 fps=155 q=31.0 size=   18176kB time=00:01:23.37 bitrate=1785.9kbits/s speed=6.44x    frame= 2091 fps=155 q=31.0 size=   18944kB time=00:01:27.04 bitrate=1782.9kbits/s speed=6.46x    frame= 2181 fps=156 q=31.0 size=   19712kB time=00:01:30.66 bitrate=1781.0kbits/s speed=6.48x    frame= 2273 fps=156 q=31.0 size=   20480kB time=00:01:34.62 bitrate=1773.0kbits/s speed=6.51x    frame= 2358 fps=157 q=31.0 size=   21248kB time=00:01:38.25 bitrate=1771.6kbits/s speed=6.52x    frame= 2450 fps=157 q=31.0 size=   22016kB time=00:01:42.08 bitrate=1766.7kbits/s speed=6.55x    frame= 2546 fps=158 q=31.0 size=   22784kB time=00:01:45.79 bitrate=1764.3kbits/s speed=6.56x    frame= 2642 fps=158 q=31.0 size=   23552kB time=00:01:49.87 bitrate=1756.0kbits/s speed=6.58x    frame= 2733 fps=158 q=31.0 size=   24320kB time=00:01:53.83 bitrate=1750.2kbits/s speed= 6.6x    frame= 2822 fps=159 q=31.0 size=   25088kB time=00:01:57.58 bitrate=1747.9kbits/s speed=6.61x    [out#0/mp4 @ 000001eb5c76c940] video:23684kB audio:1859kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.234017%
+frame= 2858 fps=159 q=-1.0 Lsize=   25603kB time=00:01:59.08 bitrate=1761.3kbits/s speed=6.63x    
+[libx264 @ 000001eb5cd60840] frame I:2858  Avg QP:26.23  size:  8486
+[libx264 @ 000001eb5cd60840] mb I  I16..4: 68.5% 30.0%  1.4%
+[libx264 @ 000001eb5cd60840] 8x8 transform intra:30.0%
+[libx264 @ 000001eb5cd60840] coded y,uvDC,uvAC intra: 19.3% 15.1% 0.2%
+[libx264 @ 000001eb5cd60840] i16 v,h,dc,p: 35% 37% 17% 11%
+[libx264 @ 000001eb5cd60840] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 28% 16% 29%  4%  4%  5%  6%  4%  4%
+[libx264 @ 000001eb5cd60840] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 23% 16% 23%  7%  7%  8%  6%  5%  5%
+[libx264 @ 000001eb5cd60840] i8c dc,h,v,p: 78% 10% 11%  1%
+[libx264 @ 000001eb5cd60840] kb/s:1629.25
+[aac @ 000001eb5c716080] Qavg: 58272.910
